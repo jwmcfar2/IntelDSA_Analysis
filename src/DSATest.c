@@ -5,9 +5,7 @@ int main() {
     srand(time(NULL));
 
     /*******************/
-    flushReloadAttack();
-    spectreV1Attack();
-    flushFlushAttack();
+    DSADescriptorInit();
     /*******************/
 
     /*/ Nonesense ///
@@ -18,6 +16,28 @@ int main() {
     ///          /*/
 
     return 0;
+}
+
+// Make new DSA Descriptor(s)
+void DSADescriptorInit() {
+    struct dsa_completion_record comp __attribute__((aligned(32)));
+    struct dsa_hw_desc desc = { };
+    desc.opcode = DSA_OPCODE_MEMMOVE;
+    /*
+    * Request a completion – since we poll on status, this flag
+    * must be 1 for status to be updated on successful
+    * completion
+    */
+    desc.flags = IDXD_OP_FLAG_RCR;
+    /* CRAV should be 1 since RCR = 1 */
+    desc.flags |= IDXD_OP_FLAG_CRAV;
+    /* Hint to direct data writes to CPU cache */
+    desc.flags |= IDXD_OP_FLAG_CC;
+    desc.xfer_size = BLEN;
+    desc.src_addr = (uintptr_t)src;
+    desc.dst_addr = (uintptr_t)dst;
+    comp.status = 0;
+    desc.completion_addr = (uintptr_t)&comp;
 }
 
 // Modified version of Intel Documentation for C Inlining

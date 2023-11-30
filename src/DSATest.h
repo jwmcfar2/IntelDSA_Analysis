@@ -7,6 +7,8 @@
 #include <pthread.h>
 #include <x86intrin.h>
 
+// Function List
+void DSADescriptorInit();
 uint64_t rdtsc();
 
 void flush(void* p) {
