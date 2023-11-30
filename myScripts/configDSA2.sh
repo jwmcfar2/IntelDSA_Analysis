@@ -136,15 +136,16 @@ fi
 if [[ $fileName != configs/* ]]; then
     fileName="configs/$fileName"
 fi
-
 accel-config save-config -s $fileName
+chmod 666 $(pwd)/$fileName
 echo -e "Saved this config to: \"$fileName\""
+################################
 
+### Optional: Read File Now ####
 read -p $'\n- Load config now?: ' userInput
 
 if [[ $userInput == *[yY]* && $userInput != *[nN]* ]]; then
     accel-config load-config -c $(pwd)/$fileName -e
-    chmod 666 $(pwd)/$fileName
     echo -e "\nFinished loading config $(pwd)/$fileName"
 fi
 ################################
