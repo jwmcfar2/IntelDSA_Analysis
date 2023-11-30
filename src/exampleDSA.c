@@ -22,7 +22,7 @@ enqcmd(void *dst, const void *src)
 
     asm volatile(".byte 0xf2, 0x0f, 0x38, 0xf8, 0x02\t\n"
                  "setz %0\t\n"
-                 : "=r"(retry) : "a" (reg), "d" (desc));
+                 : "=r"(retry) : "a" (dst), "d" (src));
 
     return (unsigned int)retry;
 }
