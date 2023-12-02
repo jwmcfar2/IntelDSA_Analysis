@@ -9,8 +9,10 @@
 #include <linux/idxd.h>
 #include <accel-config/libaccel_config.h>
 #include <x86intrin.h>
+#include <time.h>
+#include <emmintrin.h>  // Include for SSE2 intrinsics
 
-#define BLEN 4096
+#define MAX_LEN 4096
 #define WQ_PORTAL_SIZE 4096
 #define ENQ_RETRY_MAX 1000
 #define POLL_RETRY_MAX 10000
@@ -28,14 +30,17 @@ inline __attribute__((always_inline)) uint64_t rdtscp()
     return ((uint64_t)high << 32) | low;
 }
 
-static inline unsigned int
-enqcmd(void *dst, const void *src)
+static inline __attribute__((always_inline)) unsigned int
+enqcmd(void *dst, const void *src)//, uint64_t startTime)
 {
     uint8_t retry;
-
+    uint64_t startTime = rdtscp();
     asm volatile(".byte 0xf2, 0x0f, 0x38, 0xf8, 0x02\t\n"
                  "setz %0\t\n"
                  : "=r"(retry) : "a" (dst), "d" (src));
+
+    printf("\t > Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
+    printf("\t\t(Note: Accurate Cycle Reading likely requires concurrent thread\n\t\treading completion record at same time).\n\n", rdtscp()-startTime);
 
     return (unsigned int)retry;
 }
@@ -102,29 +107,70 @@ int main(int argc, char *argv[])
 {
     void *wq_portal;
     struct dsa_hw_desc desc = { };
-    char src[BLEN];
-    char dst[BLEN];
+    char src[MAX_LEN];
+    char dst[MAX_LEN];
+    char srcDummy[MAX_LEN];
+    char dstDummy[MAX_LEN];
+    char srcDummy2[MAX_LEN];
+    char dstDummy2[MAX_LEN];
+    char srcDummy3[MAX_LEN] __attribute__((aligned(16)));
+    char dstDummy3[MAX_LEN] __attribute__((aligned(16)));
+    char srcDummy4[MAX_LEN] __attribute__((aligned(32)));
+    char dstDummy4[MAX_LEN] __attribute__((aligned(32)));
     struct dsa_completion_record comp __attribute__((aligned(32)));
     int rc;
     int poll_retry, enq_retry;
-    uint64_t startTime;
+    uint64_t startTime, randVal;
+
+    srand(time(NULL));
 
     //printf("Test-A\n");
-    // Inline assembly to move the value from src to dest
-    // Test cycles for x86 ISA move:
-    __asm__ ("mov %1, %0\n\t"
-             : "=r" (dest)   // Output
-             : "r" (src)     // Input
-             );
-
     wq_portal = map_wq();
     if (wq_portal == MAP_FAILED)
         return EXIT_FAILURE;
 
     //printf("Test-B\n");
 
-    memset(src, 0xaa, BLEN);
+    // Set all test Values:
+    randVal = rand()%(255);
+    memset(src, randVal, MAX_LEN);
+    randVal = rand()%(255);
+    memset(srcDummy, randVal, MAX_LEN);
+    randVal = rand()%(255);
+    memset(srcDummy2, randVal, MAX_LEN);
+    randVal = rand()%(255);
+    memset(srcDummy3, randVal, MAX_LEN);
+    randVal = rand()%(255);
+    memset(srcDummy4, randVal, MAX_LEN);
 
+    printf("\nTest Latency of ASM mem mov\n");
+    // Inline assembly to move the value from src to dest
+    // Test cycles for x86 ISA move:
+    int i;
+    startTime=rdtscp();
+    for (i = 0; i < MAX_LEN; i+=8) {
+        asm ("movq (%1), %%rax\n\t"
+                    "movq %%rax, (%0);"
+                    :
+                    : "r" (dstDummy + i), "r" (srcDummy + i)
+                    : "%rax"
+                    );
+    }
+    printf("\t > Completed looped 64-bit CPU 'Mem Mov (movq)': Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
+
+    printf("Test Latency of C 'memcpy' function\n");
+    startTime=rdtscp();
+    memcpy(dstDummy2, srcDummy2, MAX_LEN);
+    printf("\t > Completed C 'memcpy' function: Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
+
+    printf("Test Latency of SSE Mem Mov Instruction (movdqa)\n");
+    startTime=rdtscp();
+    for (i = 0; i < MAX_LEN; i += 16) {  // SSE2 register (128-bit or 16 byte) copy, 256 iterations
+        __m128i data = _mm_load_si128((__m128i *)(srcDummy3 + i)); // Load 128-bits aligned data
+        _mm_store_si128((__m128i *)(dstDummy3 + i), data); // Store 128-bits aligned data
+    }
+    printf("\t > Completed SSE Mem Mov Instructions: Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
+    
     desc.opcode = DSA_OPCODE_MEMMOVE;
 
     /* Request a completion – since we poll on status, this flag
@@ -138,7 +184,7 @@ int main(int argc, char *argv[])
     /* Hint to direct data writes to CPU cache */
     desc.flags |= IDXD_OP_FLAG_CC;
 
-    desc.xfer_size = BLEN;
+    desc.xfer_size = MAX_LEN;
     desc.src_addr = (uintptr_t)src;
     desc.dst_addr = (uintptr_t)dst;
     desc.completion_addr = (uintptr_t)&comp;
@@ -150,8 +196,10 @@ retry:
     _mm_sfence();
 
     enq_retry = 0;
+    printf("Test Latency of DSA mem mov\n");
     startTime = rdtscp();
-    while (enqcmd(wq_portal, &desc) && enq_retry++ < ENQ_RETRY_MAX) ;    
+    while (enqcmd(wq_portal, &desc) && enq_retry++ < ENQ_RETRY_MAX) ;
+    printf("\t > Completed DSA enqueue instruction: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
     if (enq_retry == ENQ_RETRY_MAX) {
         printf("ENQCMD retry limit exceeded\n");
         rc = EXIT_FAILURE;
@@ -160,8 +208,8 @@ retry:
 
     poll_retry = 0;
     while (comp.status == 0 && poll_retry++ < POLL_RETRY_MAX)
+    printf("\tVerified completed DSA instruction: Total cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
     _mm_pause();
-    printf("\tCompleted DSA instruction: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
 
     if (poll_retry == POLL_RETRY_MAX) {
         printf("Completion status poll retry limit exceeded\n");
@@ -184,9 +232,9 @@ retry:
         rc = EXIT_FAILURE;
         }
     } else {
-        printf("desc successful\n");
-        rc = memcmp(src, dst, BLEN);
-        rc ? printf("memmove failed\n") : printf("memmove successful\n");
+        printf("\nDescriptor executed successfully\n");
+        rc = memcmp(src, dst, MAX_LEN);
+        rc ? printf("ERROR: memmove failed.\n") : printf("SUCCESS: DSA Instruction memmove successful.\n", '+');
         rc = rc ? EXIT_FAILURE : EXIT_SUCCESS;
     }
 
