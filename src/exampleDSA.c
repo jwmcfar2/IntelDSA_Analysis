@@ -15,6 +15,19 @@
 #define ENQ_RETRY_MAX 1000
 #define POLL_RETRY_MAX 10000
 
+// Uses RDTSCP Instead, which does the 'CPUID' serialization inherently, reducing possible performance overhead
+// Adding 'always_inline' to try and force inlining for timer call (GCC only?) _JMac
+inline __attribute__((always_inline)) uint64_t rdtscp()
+{
+    uint32_t low, high;
+    __asm__ volatile ("RDTSCP\n\t"       // RDTSCP: Read Time Stamp Counter and Processor ID
+                      "mov %%edx, %0\n\t"
+                      "mov %%eax, %1\n\t"
+                      : "=r" (high), "=r" (low)  // Outputs
+                      :: "%rax", "%rbx", "%rcx", "%rdx"); // Clobbers
+    return ((uint64_t)high << 32) | low;
+}
+
 static inline unsigned int
 enqcmd(void *dst, const void *src)
 {
@@ -43,16 +56,16 @@ map_wq(void)
 
     accfg_new(&ctx);
 
-    accfg_device_foreach(ctx, device) {
-        /* Use accfg_device_(*) functions to select enabled device
-        * based on name, numa node */
+    /*accfg_device_foreach(ctx, device) {
+        // Use accfg_device_(*) functions to select enabled device
+        // based on name, numa node
 
         accfg_wq_foreach(device, wq) {
             if (accfg_wq_get_user_dev_path(wq, path, sizeof(path)))
                 continue;
 
-            /* Use accfg_wq_(*) functions select WQ of type
-            * ACCFG_WQT_USER and desired mode */
+            // Use accfg_wq_(*) functions select WQ of type
+            // ACCFG_WQT_USER and desired mode
 
             wq_found = accfg_wq_get_type(wq) == ACCFG_WQT_USER &&
             accfg_wq_get_mode(wq) == ACCFG_WQ_SHARED;
@@ -62,20 +75,26 @@ map_wq(void)
 
         if (wq_found)
             break;
-    }
+    }*/
+
+    // IDK what ^ does exactly, but I know the WQ I want to use...
+    strcpy(path, "/dev/dsa/wq2.0");
 
     accfg_unref(ctx);
+    
+    //if (!wq_found)
+    //    return MAP_FAILED;
 
-    if (!wq_found)
-        return MAP_FAILED;
-
+    //printf("Test-A2\n");
     fd = open(path, O_RDWR);
     if (fd < 0)
         return MAP_FAILED;
 
+    //printf("Test-A3\n");
     wq_portal = mmap(NULL, WQ_PORTAL_SIZE, PROT_WRITE, MAP_SHARED | MAP_POPULATE, fd, 0);
     close(fd);
     
+    //printf("Test-A4\n");
     return wq_portal;
 }
 
@@ -88,10 +107,21 @@ int main(int argc, char *argv[])
     struct dsa_completion_record comp __attribute__((aligned(32)));
     int rc;
     int poll_retry, enq_retry;
+    uint64_t startTime;
+
+    //printf("Test-A\n");
+    // Inline assembly to move the value from src to dest
+    // Test cycles for x86 ISA move:
+    __asm__ ("mov %1, %0\n\t"
+             : "=r" (dest)   // Output
+             : "r" (src)     // Input
+             );
 
     wq_portal = map_wq();
     if (wq_portal == MAP_FAILED)
         return EXIT_FAILURE;
+
+    //printf("Test-B\n");
 
     memset(src, 0xaa, BLEN);
 
@@ -120,7 +150,8 @@ retry:
     _mm_sfence();
 
     enq_retry = 0;
-    while (enqcmd(wq_portal, &desc) && enq_retry++ < ENQ_RETRY_MAX) ;
+    startTime = rdtscp();
+    while (enqcmd(wq_portal, &desc) && enq_retry++ < ENQ_RETRY_MAX) ;    
     if (enq_retry == ENQ_RETRY_MAX) {
         printf("ENQCMD retry limit exceeded\n");
         rc = EXIT_FAILURE;
@@ -130,6 +161,7 @@ retry:
     poll_retry = 0;
     while (comp.status == 0 && poll_retry++ < POLL_RETRY_MAX)
     _mm_pause();
+    printf("\tCompleted DSA instruction: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
 
     if (poll_retry == POLL_RETRY_MAX) {
         printf("Completion status poll retry limit exceeded\n");

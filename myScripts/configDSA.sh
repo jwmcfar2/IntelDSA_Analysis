@@ -36,7 +36,15 @@ read -p $'\n- Make Selection\n\t[1] -- Load Existing Config from \"configs/\"\n\
 if [[ userInput -eq 1 ]]; then
     echo ""
     ls $confFolder
-    read -p $'\n\tChoose name of file (\"file.conf\"): ' fileName
+    mostRecentConf=$(ls -t configs/ | head -n1)
+    read -e -p $'\n- Make Selection\n\t[1] -- Load Config: "'"${mostRecentConf}"$'"\n\t[2] -- Manually enter different config\n\t\tSelection (1/2): ' configInput
+    
+    if [[ $configInput != 1 ]]; then
+        read -p $'\n\tChoose name of file (\"file.conf\"): ' fileName
+    else
+        fileName=$mostRecentConf
+    fi
+    
     echo -e "\n'Disabling' dsa$dsaID to allow for new config..."
     accel-config config-device dsa$dsaID
     accel-config load-config -c $confFolder$fileName -e
