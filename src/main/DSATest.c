@@ -9,14 +9,14 @@ int main(int argc, char *argv[]) {
 
     /*******************/
     // Module/Baseline Fn Tests
-    resArr[1] = single_memcpyC(bufferSize);
-    resArr[2] = single_movqInsASM(bufferSize);
-    resArr[3] = single_SSE1movaps(bufferSize);
-    resArr[4] = single_SSE2movdqa(bufferSize);
-    resArr[5] = single_SSE4movntdq(bufferSize);
-    resArr[6] = single_AVX256(bufferSize);
-    resArr[7] = single_AVX512_32(bufferSize);
-    resArr[8] = single_AVX512_64(bufferSize);
+    resArr[CmemIndx] = single_memcpyC(bufferSize);
+    resArr[ASMmovqIndx] = single_movqInsASM(bufferSize);
+    resArr[SSE1Indx] = single_SSE1movaps(bufferSize);
+    resArr[SSE2Indx] = single_SSE2movdqa(bufferSize);
+    resArr[SSE4Indx] = single_SSE4movntdq(bufferSize);
+    resArr[AVX256Indx] = single_AVX256(bufferSize);
+    resArr[AVX5_32Indx] = single_AVX512_32(bufferSize);
+    resArr[AVX5_64Indx] = single_AVX512_64(bufferSize);
 
     // Intel DSA Fns
     single_DSADescriptorInit();
@@ -29,11 +29,13 @@ int main(int argc, char *argv[]) {
     // Output Results
     parseResults(argv[2]);
 
-    int i;
-    printf("\n%s\n", _singleResStr_);
-    for(i=0; i<NUM_TESTS; i++)
+    return 0;
+
+    // DEBUG ONLY
+    printf("\n%s", _headerStr_);
+    for(int i=0; i<NUM_TESTS; i++)
         printf("   %lu    ", resArr[i]);
-    printf("\n");
+    printf("\n\n");
 
     return 0;
 }
@@ -41,8 +43,8 @@ int main(int argc, char *argv[]) {
 // Make new DSA Descriptor(s) (effectively 'job packets' to tell DSA what to do)
 void ANTI_OPT single_DSADescriptorInit() {
     //printf("\n || Test Latency of DSA mem mov\n");
-    int i, fd;
-    
+    int fd;
+
     // WQ Path Check
     fd = open(wqPath, O_RDWR);
     detailedAssert((fd >= 0), "DSA Descriptor Init() failed opening WQ portal file from path.");
@@ -64,7 +66,7 @@ void ANTI_OPT single_DSADescriptorInit() {
     // Init srcDSA
     srcDSA = aligned_alloc(64, bufferSize);
     dstDSA = aligned_alloc(64, bufferSize);
-    for(i=0; i<bufferSize; i++)
+    for(int i=0; i<bufferSize; i++)
         srcDSA[i] = rand()%(255);
 
     // Set packet info
@@ -98,7 +100,7 @@ void ANTI_OPT single_DSACompletionCheck(){
     uint64_t failCount=0;
 
     startTime = rdtscp();
-    for(i=0; i<maxCount; i++)
+    for(int i=0; i<maxCount; i++)
     {
         if(compRec.status == 0)
         {
@@ -115,9 +117,10 @@ void ANTI_OPT single_DSACompletionCheck(){
         free(srcDSA);
         free(dstDSA);
 
-        printf("\t> Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", endTimeEnQ-startTimeEnQ);
-        printf("\tDSA_DEBUG: Total cycles elapsed from enQ = %lu cycles.(FailCount = %lu)\n", endTimeDSA-startTimeDSA, failCount);
-        resArr[0] = endTimeDSA-startTimeDSA;
+        //printf("\t> Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", endTimeEnQ-startTimeEnQ);
+        //printf("\tDSA_DEBUG: Total cycles elapsed from enQ = %lu cycles.(FailCount = %lu)\n", endTimeDSA-startTimeDSA, failCount);
+        resArr[DSAenqIndx] = endTimeEnQ-startTimeEnQ;
+        resArr[DSAmovRIndx] = endTimeDSA-startTimeDSA;
         return;
     }
     
@@ -141,16 +144,31 @@ uint8_t ANTI_OPT enqcmd(void *_dest, const void *_src){
 }
 
 void parseResults(char* fileName){
-    
-    // DELETE ME
-    return;
 
-    FILE *file = fopen(fileName, "a+");
-    detailedAssert((file), "parseResults() - Could not open passed-in resFile.");
-    
-    // If empty file, add header to the top of it
-    // (Note: 'a+' mode needed for this type of check.)
-    if (fgetc(file) == EOF) {
-        fputs(_singleResStr_, file);
+    // Open the file in read mode to check if it exists
+    FILE *file = fopen(fileName, "r");
+
+    // File doesn't exist, create it and write the header
+    if (file == NULL) {
+        file = fopen(fileName, "w");
+        detailedAssert((file != NULL), "parseResults() - Could not open or create resFile.");
+        fputs(_headerStr_, file);  // Write the header to the new file
+        fclose(file);                 // Close the file after writing the header
+        printf("\n\tCreated new resFile: %s\n\n", fileName);
+    } else {
+        // File already exists, just close it without modifying - will append later
+        fclose(file);
     }
+
+    // Open the file in append mode and add the new line of data
+    file = fopen(fileName, "a");
+    detailedAssert((file != NULL), "parseResults() - Could not open resFile to append data.");
+    //fputs(dataLine, file);      // Append the new line of data
+
+    for (int i=0; i<NUM_TESTS; i++) {
+        fprintf(file, "   %lu    ", resArr[i]); // Adjust the format specifier if needed
+    }
+    fprintf(file, "\n"); // Append a newline character at the end
+
+    fclose(file);               // Close the file after appending
 }

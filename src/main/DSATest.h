@@ -20,8 +20,23 @@
 
 // Size / settings
 #define PORTAL_SIZE 4096
-#define NUM_TESTS 9
-#define _singleResStr_ "DSA_memmov  C_memcpy  ASM_movq  SSE1_movaps  SSE2_movdqa  SSE4_movtdq  AVX_256  AVX_512_32b  AVX_512_64b"
+#define _headerStr_ "  DSA_EnQ  DSA_memmov   C_memcpy   ASM_movq  SSE1_movaps  "\
+                    "SSE2_mov   SSE4_mov   AVX_256   AVX_512_32 AVX_512_64\n"
+
+// Perf Counter Indexes, indexed 0-9 (10 entries -> NUM_TESTS=10)
+typedef enum {
+    DSAenqIndx, // Starts at 0
+    DSAmovRIndx,
+    CmemIndx,
+    ASMmovqIndx,
+    SSE1Indx,
+    SSE2Indx,
+    SSE4Indx,
+    AVX256Indx,
+    AVX5_32Indx,
+    AVX5_64Indx,
+    NUM_TESTS
+} resIndex;
 
 // WQ I used _JMac
 char* wqPath = "/dev/dsa/wq2.0";
