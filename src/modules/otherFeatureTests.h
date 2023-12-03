@@ -13,7 +13,6 @@
 #pragma once
 
 // 'Global' Variables to reference *just* for this C file
-//static uint64_t startTime, endTime;//, randVal;
 static char* src;
 static char* dst;
 

@@ -21,7 +21,15 @@ void volatile flush2(void* p, void* q){
 void detailedAssert(bool assertRes, const char* msg){
     if(!assertRes)
     {
-        printf("Error: Assertion Failed. ErrMsg: %s\n", msg);
+        printf("Error: Assertion Failed. ErrMsg: \"%s\"\n", msg);
         abort();
     }
+}
+
+void valueCheck(char* src, char* dst, uint64_t size)
+{
+    if(memcmp(src, dst, size) == 0)
+        printf("\tValidation:SUCCESS - Destination value matches source value.\n");
+    else
+        detailedAssert(false, "Validation:FAIL - Source/Destination value mismatch.");
 }

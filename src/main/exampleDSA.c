@@ -53,7 +53,7 @@ enqcmd(void *dst, const void *src)//, uint64_t startTime)
                  : "=r"(retry) : "a" (dst), "d" (src));
 
     printf("\t > Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
-    printf("    (Note: Accurate cycle count likely needs concurrent thread checking completion record)\n", rdtscp()-startTime);
+    printf("    (Note: Accurate cycle count likely needs concurrent thread checking completion record)\n");
 
     return (unsigned int)retry;
 }
