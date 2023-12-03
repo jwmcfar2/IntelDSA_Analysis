@@ -22,9 +22,13 @@ int main(int argc, char *argv[]) {
     single_DSADescriptorInit();
     single_DSADescriptorSubmit();
     single_DSACompletionCheck();
+    //single_DSADescriptorSubmit();
+    //single_DSACompletionCheck();
     /*******************/
 
     // Output Results
+    parseResults(argv[2]);
+
     int i;
     printf("\n%s\n", _singleResStr_);
     for(i=0; i<NUM_TESTS; i++)
@@ -36,7 +40,7 @@ int main(int argc, char *argv[]) {
 
 // Make new DSA Descriptor(s) (effectively 'job packets' to tell DSA what to do)
 void ANTI_OPT single_DSADescriptorInit() {
-    printf("\n || Test Latency of DSA mem mov\n");
+    //printf("\n || Test Latency of DSA mem mov\n");
     int i, fd;
     
     // WQ Path Check
@@ -91,21 +95,29 @@ void ANTI_OPT single_DSADescriptorSubmit(){
 void ANTI_OPT single_DSACompletionCheck(){
     uint32_t i, maxCount=1000000;
     uint64_t startTime, endTime;
+    uint64_t failCount=0;
 
     startTime = rdtscp();
     for(i=0; i<maxCount; i++)
     {
         if(compRec.status == 0)
+        {
+            failCount++;
             continue;
+        }
 
+        endTimeDSA = rdtscp();
         endTime = rdtscp();
-        printf("\tVerified completed DSA instruction: Total cycles elapsed = %lu cycles.\n", endTime-startTime);
+        //printf("\tVerified completed DSA instruction: Total cycles elapsed = %lu cycles.\n", endTime-startTime);
+        //printf("  NOTE: DOUBLE CHECK TIMINGS OF START/END FOR DSA - MAY NEED TWO THREADS!! (1 submitting, 1 checking).\n");
         munmap(wq_portal, PORTAL_SIZE);
         valueCheck(srcDSA, dstDSA, bufferSize);
         free(srcDSA);
         free(dstDSA);
 
-        resArr[0] = endTime-startTime;
+        printf("\t> Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", endTimeEnQ-startTimeEnQ);
+        printf("\tDSA_DEBUG: Total cycles elapsed from enQ = %lu cycles.(FailCount = %lu)\n", endTimeDSA-startTimeDSA, failCount);
+        resArr[0] = endTimeDSA-startTimeDSA;
         return;
     }
     
@@ -117,12 +129,28 @@ uint8_t ANTI_OPT enqcmd(void *_dest, const void *_src){
     uint64_t startTime, endTime; 
     uint8_t retry;
     
-    startTime = rdtscp();
+    startTimeEnQ = rdtscp();
     asm volatile(".byte 0xf2, 0x0f, 0x38, 0xf8, 0x02\t\n"
                  "setz %0\t\n"
                  : "=r"(retry) : "a" (_dest), "d" (_src));
-    startTime = rdtscp();
-    printf("\t> Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
-
+    endTimeEnQ = rdtscp();   
+    //printf("\t> Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", endTime-startTime);
+    startTimeDSA = rdtscp();
+ 
     return retry;
+}
+
+void parseResults(char* fileName){
+    
+    // DELETE ME
+    return;
+
+    FILE *file = fopen(fileName, "a+");
+    detailedAssert((file), "parseResults() - Could not open passed-in resFile.");
+    
+    // If empty file, add header to the top of it
+    // (Note: 'a+' mode needed for this type of check.)
+    if (fgetc(file) == EOF) {
+        fputs(_singleResStr_, file);
+    }
 }

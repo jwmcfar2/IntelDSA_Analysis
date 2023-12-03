@@ -29,7 +29,7 @@ void detailedAssert(bool assertRes, const char* msg){
 void valueCheck(char* src, char* dst, uint64_t size)
 {
     if(memcmp(src, dst, size) == 0)
-        printf("\tValidation:SUCCESS - Destination value matches source value.\n");
+        {}//printf("\tValidation:SUCCESS - Destination value matches source value.\n");
     else
         detailedAssert(false, "Validation:FAIL - Source/Destination value mismatch.");
 }

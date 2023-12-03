@@ -7,7 +7,7 @@ mkdir -p bin/
 featureFlags="-laccel-config -msse2 -msse4.1 -mavx2 -mavx512f -mavx512dq"
 
 # Flags for compilation: flto = extern inlining support
-#compilationFlags="-flto"
+compilationFlags=""
 
 # Compile all .c files in src/modules to object files
 for f in src/modules/*.c; do
