@@ -17,11 +17,11 @@ static char* src;
 static char* dst;
 
 // Function list - returns time elapsed (in cycles) for each of these implementations
-uint64_t single_memcpyC(uint64_t bufferSize);
-uint64_t single_movqInsASM(uint64_t bufferSize);
-uint64_t single_SSE1movaps(uint64_t bufferSize);
-uint64_t single_SSE2movdqa(uint64_t bufferSize);
-uint64_t single_SSE4movntdq(uint64_t bufferSize);
-uint64_t single_AVX256(uint64_t bufferSize);
-uint64_t single_AVX512_32(uint64_t bufferSize);
-uint64_t single_AVX512_64(uint64_t bufferSize);
+uint64_t single_memcpyC(uint64_t bufSize);
+uint64_t single_movqInsASM(uint64_t bufSize);
+uint64_t single_SSE1movaps(uint64_t bufSize);
+uint64_t single_SSE2movdqa(uint64_t bufSize);
+uint64_t single_SSE4movntdq(uint64_t bufSize);
+uint64_t single_AVX256(uint64_t bufSize);
+uint64_t single_AVX512_32(uint64_t bufSize);
+uint64_t single_AVX512_64(uint64_t bufSize);

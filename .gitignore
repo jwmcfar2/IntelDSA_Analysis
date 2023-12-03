@@ -3,3 +3,4 @@ src/hw*
 Hw*
 hw*
 bin/
+results/*

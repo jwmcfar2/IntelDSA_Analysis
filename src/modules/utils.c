@@ -21,7 +21,7 @@ void volatile flush2(void* p, void* q){
 void detailedAssert(bool assertRes, const char* msg){
     if(!assertRes)
     {
-        printf("Error: Assertion Failed. ErrMsg: \"%s\"\n", msg);
+        printf("Error: Assertion Failed. \n    ErrMsg: \"%s\"\n", msg);
         abort();
     }
 }
