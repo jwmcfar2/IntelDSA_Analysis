@@ -10,12 +10,25 @@
 #include <accel-config/libaccel_config.h>
 #include <x86intrin.h>
 #include <time.h>
-#include <emmintrin.h>  // Include for SSE2 intrinsics
+#include <smmintrin.h> // Include for SSE4.1 (and earlier) intrinsics
+#include <immintrin.h> // Include for AVX intrinsics
 
 #define MAX_LEN 4096
 #define WQ_PORTAL_SIZE 4096
 #define ENQ_RETRY_MAX 1000
 #define POLL_RETRY_MAX 10000
+
+// clflush helper -- modified for 2 ins
+void flush(void* p, void* q) {
+    asm volatile ("clflush 0(%0)\n"
+        :
+        : "c" (p)
+        : "rax");
+    asm volatile ("clflush 0(%0)\n"
+        :
+        : "c" (q)
+        : "rax");
+}
 
 // Uses RDTSCP Instead, which does the 'CPUID' serialization inherently, reducing possible performance overhead
 // Adding 'always_inline' to try and force inlining for timer call (GCC only?) _JMac
@@ -40,7 +53,7 @@ enqcmd(void *dst, const void *src)//, uint64_t startTime)
                  : "=r"(retry) : "a" (dst), "d" (src));
 
     printf("\t > Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
-    printf("\t\t(Note: Accurate Cycle Reading likely requires concurrent thread\n\t\treading completion record at same time).\n\n", rdtscp()-startTime);
+    printf("    (Note: Accurate cycle count likely needs concurrent thread checking completion record)\n", rdtscp()-startTime);
 
     return (unsigned int)retry;
 }
@@ -109,68 +122,133 @@ int main(int argc, char *argv[])
     struct dsa_hw_desc desc = { };
     char src[MAX_LEN];
     char dst[MAX_LEN];
-    char srcDummy[MAX_LEN];
+    /*char srcDummy[MAX_LEN];
     char dstDummy[MAX_LEN];
     char srcDummy2[MAX_LEN];
     char dstDummy2[MAX_LEN];
     char srcDummy3[MAX_LEN] __attribute__((aligned(16)));
     char dstDummy3[MAX_LEN] __attribute__((aligned(16)));
+    char srcDummy3b[MAX_LEN] __attribute__((aligned(16)));
+    char dstDummy3b[MAX_LEN] __attribute__((aligned(16)));
     char srcDummy4[MAX_LEN] __attribute__((aligned(32)));
     char dstDummy4[MAX_LEN] __attribute__((aligned(32)));
+    char srcDummy5[MAX_LEN] __attribute__((aligned(64)));
+    char dstDummy5[MAX_LEN] __attribute__((aligned(64)));*/
     struct dsa_completion_record comp __attribute__((aligned(32)));
     int rc;
     int poll_retry, enq_retry;
-    uint64_t startTime, randVal;
+    //uint64_t startTime, endTime, randVal;
 
-    srand(time(NULL));
+    //srand(time(NULL));
 
-    //printf("Test-A\n");
     wq_portal = map_wq();
     if (wq_portal == MAP_FAILED)
         return EXIT_FAILURE;
 
-    //printf("Test-B\n");
-
     // Set all test Values:
-    randVal = rand()%(255);
-    memset(src, randVal, MAX_LEN);
-    randVal = rand()%(255);
-    memset(srcDummy, randVal, MAX_LEN);
-    randVal = rand()%(255);
-    memset(srcDummy2, randVal, MAX_LEN);
-    randVal = rand()%(255);
-    memset(srcDummy3, randVal, MAX_LEN);
-    randVal = rand()%(255);
-    memset(srcDummy4, randVal, MAX_LEN);
+    /*int i;
+    for(int i=0; i<MAX_LEN; i++)
+    {
+        src[i] = rand()%(255);
+        //src[i]=randVal;*/
+        /*randVal = rand()%(255);
+        srcDummy[i]=randVal;
+        randVal = rand()%(255);
+        srcDummy2[i]=randVal;
+        randVal = rand()%(255);
+        srcDummy3[i]=randVal;
+        randVal = rand()%(255);
+        srcDummy3b[i]=randVal;
+        randVal = rand()%(255);
+        srcDummy4[i]=randVal;
+        randVal = rand()%(255);
+        srcDummy5[i]=randVal;*/
+    //}
+    
+    /*flush(&dst, &src);
+    printf(" || Test Latency of C 'memcpy' function\n");
+    startTime=rdtscp();
+    memcpy(dst, src, MAX_LEN);
+    endTime=rdtscp();
+    printf("\t > Completed C 'memcpy' function: Cycles elapsed = %lu cycles.\n\n", endTime-startTime);
+    */
 
-    printf("\nTest Latency of ASM mem mov\n");
+    // ~~~~~~~~ ASM Mov INS ~~~~~~~~ //
+    //printf("\n || Test Latency of ASM mem mov\n");
     // Inline assembly to move the value from src to dest
     // Test cycles for x86 ISA move:
-    int i;
-    startTime=rdtscp();
-    for (i = 0; i < MAX_LEN; i+=8) {
-        asm ("movq (%1), %%rax\n\t"
-                    "movq %%rax, (%0);"
-                    :
-                    : "r" (dstDummy + i), "r" (srcDummy + i)
-                    : "%rax"
-                    );
-    }
-    printf("\t > Completed looped 64-bit CPU 'Mem Mov (movq)': Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
+    //flush(&dstDummy, &srcDummy);
+    //startTime=rdtscp();
+    //#pragma unroll
+    //for (i = 0; i < MAX_LEN; i+=8) {
+    //    asm ("movq (%1), %%rax\n\t"
+    //                "movq %%rax, (%0);"
+    //                :
+    //                : "r" (dstDummy + i), "r" (srcDummy + i)
+    //                : "%rax"
+    //                );
+    //}
+    //printf("\t > Completed looped 64-bit CPU Mov Ins (movq): Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
 
-    printf("Test Latency of C 'memcpy' function\n");
+    // ~~~~~~~~ C Memcpy INS ~~~~~~~~ //
+    
+    //return 0;
+    /*
+    // ~~~~~~~~ SSE2 Movdqa ~~~~~~~~ //
+    printf(" || Test Latency of SSE2 Mov Instruction (movdqa)\n");
+    flush(&dstDummy3, &srcDummy3);
     startTime=rdtscp();
-    memcpy(dstDummy2, srcDummy2, MAX_LEN);
-    printf("\t > Completed C 'memcpy' function: Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
-
-    printf("Test Latency of SSE Mem Mov Instruction (movdqa)\n");
-    startTime=rdtscp();
+    #pragma unroll
     for (i = 0; i < MAX_LEN; i += 16) {  // SSE2 register (128-bit or 16 byte) copy, 256 iterations
         __m128i data = _mm_load_si128((__m128i *)(srcDummy3 + i)); // Load 128-bits aligned data
         _mm_store_si128((__m128i *)(dstDummy3 + i), data); // Store 128-bits aligned data
     }
-    printf("\t > Completed SSE Mem Mov Instructions: Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
+    printf("\t > Completed SSE2 Mov Instructions: Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
+
+    // ~~~~~~~~ SSE4.1 Movntdq (non-temporal) ~~~~~~~~ //
+    printf(" || Test Latency of SSE4.1 Mov Instruction (Movntdq)\n");
+    flush(&dstDummy3b, &srcDummy3b);
+    startTime=rdtscp();
+    // Assuming src and dst are 16-byte aligned and len is a multiple of 16
+    #pragma unroll
+    for (i = 0; i < MAX_LEN; i += 16) {
+        // Non-temporal loads are not part of SSE intrinsics. We use regular loads.
+        __m128i data = _mm_load_si128((__m128i*)(srcDummy3b + i)); // Load 128 bits from the source
+
+        // Non-temporal store to write the data in the store buffer and eventually to memory.
+        _mm_stream_si128((__m128i*)(dstDummy3b + i), data);
+    }
+
+    // A non-temporal store may leave data in the store buffer. The sfence instruction guarantees
+    // that every preceding store is globally visible before any load or store instructions that
+    // follow the sfence instruction.
+    printf("\t > Finished *executing* SSE4.1 Mov Ins: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
+    _mm_sfence();
+    printf("\t > Completed SSE4.1 Mov Ins (TO MEMORY, NOT CACHE): Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
     
+    // ~~~~~~~~ AVX-256 ~~~~~~~~ //
+    printf(" || Test Latency of AVX-256 Mov Instruction (vmovdqa)\n");
+    flush(&dstDummy4, &srcDummy4);
+    startTime=rdtscp();
+    #pragma unroll
+    for (i = 0; i < MAX_LEN; i += 32) {
+        __m256i data = _mm256_load_si256((__m256i*)(srcDummy4 + i)); // Load 256 bits from source
+        _mm256_store_si256((__m256i*)(dstDummy4 + i), data);         // Store 256 bits into destination
+    }
+    printf("\t > Completed AVX-256 Mov Instructions: Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
+    
+    // ~~~~~~~~ AVX-512 ~~~~~~~~ //
+    printf(" || Test Latency of AVX-512 Mov Instruction (vmovdqa)\n");
+    flush(&dstDummy5, &srcDummy5);
+    startTime=rdtscp();
+    #pragma unroll
+    for (i = 0; i < MAX_LEN; i += 64) {
+        __m512i data = _mm512_load_si512((__m512i*)(srcDummy5 + i)); // Load 512 bits from the source
+        _mm512_store_si512((__m512i*)(dstDummy5 + i), data);         // Store 512 bits into the destination
+    }
+    printf("\t > Completed AVX-512 Mov Instructions: Cycles elapsed = %lu cycles.\n\n", rdtscp()-startTime);
+    */
+
     desc.opcode = DSA_OPCODE_MEMMOVE;
 
     /* Request a completion – since we poll on status, this flag
@@ -196,8 +274,9 @@ retry:
     _mm_sfence();
 
     enq_retry = 0;
-    printf("Test Latency of DSA mem mov\n");
-    startTime = rdtscp();
+    printf(" || Test Latency of DSA mem mov\n");
+    flush(&wq_portal, &desc);
+    uint64_t startTime = rdtscp();
     while (enqcmd(wq_portal, &desc) && enq_retry++ < ENQ_RETRY_MAX) ;
     printf("\t > Completed DSA enqueue instruction: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
     if (enq_retry == ENQ_RETRY_MAX) {
