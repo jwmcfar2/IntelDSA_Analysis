@@ -36,7 +36,18 @@ typedef enum {
     AVX5_32Indx,
     AVX5_64Indx,
     NUM_TESTS
-} resIndex;
+} resIndxEnum;
+
+// Run Modes
+typedef enum {
+    singleCold, // Starts at 0
+    singleHits,
+    singleContention,
+    bulkCold,
+    bulkHits,
+    bulkContention,
+    NUM_MODES
+} modeEnum;
 
 // WQ I used _JMac
 char* wqPath = "/dev/dsa/wq2.0";
@@ -49,6 +60,7 @@ char* dstDSA;
 void* wq_portal;
 
 // Program Vars
+modeEnum mode;
 uint64_t bufferSize;
 uint64_t resArr[NUM_TESTS];
 uint64_t startTimeEnQ, endTimeEnQ;

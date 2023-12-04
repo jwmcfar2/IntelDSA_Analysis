@@ -17,7 +17,7 @@ uint64_t single_memcpyC(uint64_t bufSize){
     endTime=rdtscp();
     //printf("\t> Completed C 'memcpy' function: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
-    valueCheck(src, dst, bufSize);
+    valueCheck(src, dst, bufSize, "[memcpyC] ");
     free(src);
     free(dst);
 
@@ -49,7 +49,7 @@ uint64_t single_movqInsASM(uint64_t bufSize){
     endTime=rdtscp();
     //printf("\t> Completed looped 64-bit CPU Mov Ins (movq): Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
-    valueCheck(src, dst, bufSize);
+    valueCheck(src, dst, bufSize, "[ASMmovq] ");
     free(src);
     free(dst);
 
@@ -77,7 +77,7 @@ uint64_t single_SSE1movaps(uint64_t bufSize){
     endTime=rdtscp();
     //printf("\t> Completed SSE1 Mov Instructions: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
-    valueCheck(src, dst, bufSize);
+    valueCheck(src, dst, bufSize, "[SSE1] ");
     free(src);
     free(dst);
 
@@ -105,7 +105,7 @@ uint64_t single_SSE2movdqa(uint64_t bufSize){
     endTime=rdtscp();
     //printf("\t> Completed SSE2 Mov Instructions: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
-    valueCheck(src, dst, bufSize);
+    valueCheck(src, dst, bufSize, "[SSE2] ");
     free(src);
     free(dst);
 
@@ -142,7 +142,7 @@ uint64_t single_SSE4movntdq(uint64_t bufSize){
     endTime=rdtscp();
     //printf("\t> Completed SSE4.1 Mov Ins (TO MEMORY, NOT CACHE): Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
-    valueCheck(src, dst, bufSize);
+    valueCheck(src, dst, bufSize, "[SSE4] ");
     free(src);
     free(dst);
 
@@ -170,7 +170,7 @@ uint64_t single_AVX256(uint64_t bufSize){
     endTime=rdtscp();
     //printf("\t> Completed AVX-256 Mov Instructions: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
-    valueCheck(src, dst, bufSize);
+    valueCheck(src, dst, bufSize, "[AVX256] ");
     free(src);
     free(dst);
 
@@ -198,7 +198,7 @@ uint64_t single_AVX512_32(uint64_t bufSize){
     endTime=rdtscp();
     //printf("\t> Completed AVX-512 (32-bit) Mov Ins: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
-    valueCheck(src, dst, bufSize);
+    valueCheck(src, dst, bufSize, "[AVX512_32] ");
     free(src);
     free(dst);
 
@@ -226,7 +226,7 @@ uint64_t single_AVX512_64(uint64_t bufSize){
     endTime=rdtscp();
     //printf("\t> Completed AVX-512 (64-bit) Mov Ins: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
-    valueCheck(src, dst, bufSize);
+    valueCheck(src, dst, bufSize, "[AVX512_64] ");
     free(src);
     free(dst);
 

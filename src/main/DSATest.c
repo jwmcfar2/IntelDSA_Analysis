@@ -1,30 +1,40 @@
 #include "DSATest.h"
 
 int main(int argc, char *argv[]) {
-    detailedAssert((argc==3),"Main() - Not enough input arguments specified (./program bufferSize resfile).");
+    detailedAssert((argc==4),"Main() - Not enough input arguments specified (./program bufferSize resfile mode).");
     srand(time(NULL));
+    detailedAssert((atoi(argv[3])>=0 && atoi(argv[3])<NUM_MODES),"Main() - 'Mode' Num Invalid.");
+    mode = (modeEnum)atoi(argv[3]);
+    //printf("\tRunning DSATest for mode '%d', then saving results to \"%s\"...\n", mode, argv[2]);
 
     bufferSize = (unsigned int)strtoul(argv[1], NULL, 10);
     detailedAssert((bufferSize%64==0),"Main() - Please specify bufferSize that is a factor of 64.");
+    //printf("Debug: bufferSize = %lu\n", bufferSize);
 
-    /*******************/
-    // Module/Baseline Fn Tests
-    resArr[CmemIndx] = single_memcpyC(bufferSize);
-    resArr[ASMmovqIndx] = single_movqInsASM(bufferSize);
-    resArr[SSE1Indx] = single_SSE1movaps(bufferSize);
-    resArr[SSE2Indx] = single_SSE2movdqa(bufferSize);
-    resArr[SSE4Indx] = single_SSE4movntdq(bufferSize);
-    resArr[AVX256Indx] = single_AVX256(bufferSize);
-    resArr[AVX5_32Indx] = single_AVX512_32(bufferSize);
-    resArr[AVX5_64Indx] = single_AVX512_64(bufferSize);
+    switch (mode) {
+        case 0: // singleCold
+            /*******************/
+            // Module/Baseline Fn Tests
+            resArr[CmemIndx] = single_memcpyC(bufferSize);
+            resArr[ASMmovqIndx] = single_movqInsASM(bufferSize);
+            resArr[SSE1Indx] = single_SSE1movaps(bufferSize);
+            resArr[SSE2Indx] = single_SSE2movdqa(bufferSize);
+            resArr[SSE4Indx] = single_SSE4movntdq(bufferSize);
+            resArr[AVX256Indx] = single_AVX256(bufferSize);
+            resArr[AVX5_32Indx] = single_AVX512_32(bufferSize);
+            resArr[AVX5_64Indx] = single_AVX512_64(bufferSize);
 
-    // Intel DSA Fns
-    single_DSADescriptorInit();
-    single_DSADescriptorSubmit();
-    single_DSACompletionCheck();
-    //single_DSADescriptorSubmit();
-    //single_DSACompletionCheck();
-    /*******************/
+            // Intel DSA Fns
+            single_DSADescriptorInit();
+            single_DSADescriptorSubmit();
+            single_DSACompletionCheck();
+            /*******************/
+            break;
+        default:
+            printf("DEBUG: ARGV=%s, Mode=%d.\n", atoi(argv[3]), mode);
+            printf("Mode Invalid, or unimplemented. Exiting...\n");
+            return 1;
+    }
 
     // Output Results
     parseResults(argv[2]);
@@ -108,17 +118,25 @@ void ANTI_OPT single_DSACompletionCheck(){
             continue;
         }
 
+        if(compRec.status & 0x3 == 0x3)
+        {
+            printf("\nERROR: Failed due to 'partial completion' from a page fault... I think? (Status=0x%X)\n", compRec.status);
+            printf("If you wish to exceed page size (usually 4KB), look more into spec - or send separate descriptors\n\n");
+            detailedAssert(false, "DSA Completion - Failed to complete transfer.");
+        }
+        //printf("DEBUG: compRec.status = %d(0x%X) ('0x01' means success!)\n", compRec.status, compRec.status);
+
         endTimeDSA = rdtscp();
         endTime = rdtscp();
         //printf("\tVerified completed DSA instruction: Total cycles elapsed = %lu cycles.\n", endTime-startTime);
         //printf("  NOTE: DOUBLE CHECK TIMINGS OF START/END FOR DSA - MAY NEED TWO THREADS!! (1 submitting, 1 checking).\n");
         munmap(wq_portal, PORTAL_SIZE);
-        valueCheck(srcDSA, dstDSA, bufferSize);
+        //printf("\tDSA_DEBUG: Total cycles elapsed from enQ = %lu cycles.(FailCount = %lu)\n", endTimeDSA-startTimeDSA, failCount);
+        valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
         free(srcDSA);
         free(dstDSA);
 
         //printf("\t> Completed DSA enqueue instruction *attempt*: Cycles elapsed = %lu cycles.\n", endTimeEnQ-startTimeEnQ);
-        //printf("\tDSA_DEBUG: Total cycles elapsed from enQ = %lu cycles.(FailCount = %lu)\n", endTimeDSA-startTimeDSA, failCount);
         resArr[DSAenqIndx] = endTimeEnQ-startTimeEnQ;
         resArr[DSAmovRIndx] = endTimeDSA-startTimeDSA;
         return;
