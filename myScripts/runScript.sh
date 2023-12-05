@@ -48,9 +48,10 @@ for bufferSize in ${bufferSizes[@]}; do
 
     echo -e "\nRunning $runCount ${modeType[runMode]}/${bufferType[runMode]}-Mode Tests for ${sizeSubstr}-sized Buffer..."
 
-    # Run actual tests $runCount times - in a SERIAL implementation
+    # Run actual tests $runCount times - in a SERIAL implementation, split off from this script
     for ((i=0; i<runCount; i++)); do
-        taskset -c $cpuAffin $runFile $bufferSize $outputResFile $runMode
+        taskset -c $cpuAffin $runFile $bufferSize $outputResFile $runMode &
+        wait $!
     done
 
     mv $outputResFile ".tempFile.out"

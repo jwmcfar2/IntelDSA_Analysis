@@ -1,10 +1,11 @@
 #!/bin/bash
+# ./graphScript.sh [runMode]
 
 bufferSizes=("64B" "128B" "256B" "512B" "1KB" "2KB" "4KB") #8192 16384 32768 65536 131072) # Issue with Page Size Faults for single enQ DSA
 bufferSizeSuffix=("B" "KB")
 bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
 modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
-graphAxisNames=("DSAEnQ" "DSAMemMov" "Cmemcpy" "SSE1movaps" "SSE2mov" "SSE4mov" "AVX256" "AVX512-32" "AVX512-64")
+graphAxisNames=("DSA EnQ" "DSA Mem Mov" "C memcpy" "SSE1 movaps" "SSE2 mov" "SSE4 mov" "AVX 256" "AVX 512-32" "AVX 512-64")
 
 runMode=$1
 # Choose run mode
@@ -87,16 +88,6 @@ gnuplot <<- EOF
 set terminal png
 set output "$outputFile"
 
-# Define buffer size labels as a gnuplot array-like string (used below in the plot command)
-#bufferSizes=("64B" "128B" "256B" "512B" "1KB" "2KB" "4KB")
-bufferSizesString = "64B 128B 256B 512B 1KB 2KB 4KB"
-BufferSizeLabel(n) = word(bufferSizesString, n)
-
-instString="DSAEnQ DSAMemMov Cmemcpy SSE1movaps SSE2mov SSE4mov AVX256 AVX512-32 AVX512-64"
-instLabel(n) = word(instString, n)
-
-# Define the space between each bar and the cluster itself
-
 set style data histogram
 set style histogram cluster gap 3
 set style fill solid border -1
@@ -110,21 +101,25 @@ set key font ",11"
 set key spacing 1.1
 set key samplen 1
 set key box linestyle 1
+set label "{/=10:Bold Buffer Sizes}" at screen 0.798, 0.58
 
 # Margins configuration
-#set lmargin at screen 0.125
+set lmargin at screen 0.1
 set rmargin at screen 0.95
 #set tmargin at screen 0.975
 #set bmargin at screen 0.2
 
 # Axes, labels, and grid configuration
-set ylabel "{/:Bold Normalized Latency}" offset 1,0
-set xlabel "{/:Bold Instruction Type}" offset 0,0.5
-set grid ytics
+set title "{/=15:Bold Avg Latency for MemMov Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
+set termoption enhanced
+set ylabel "{/:Bold Normalized Latency}\n{/=10(Baseline=x86'movq')}" offset 1,0
+set xlabel "{/:Bold Instruction Type}" offset 0,1
+set ytics nomirror
 
 # Custom xtics
 set xtics nomirror rotate by -45 font ", 9"
 set xtics scale 0
+#set ytics scale 0
 $xtic_string
 
 # Setting up the y-range and x-range
@@ -154,7 +149,7 @@ plot \
 EOF
 
 # Comment out to allow for deletion of temp files
-exit
+#exit
 
 rm results/.temp*
 

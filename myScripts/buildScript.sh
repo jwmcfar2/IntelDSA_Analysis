@@ -28,5 +28,6 @@ for f in src/main/*.c; do
 done
 
 # DEBUG
+gcc -g src/main/DSATest.c $objFiles -o bin/test_debug $featureFlags
 #gcc $objFiles -S -fverbose-asm -masm=intel -o src/main/DSATest.asm src/main/DSATest.c $featureFlags
 #gcc -S -fverbose-asm -masm=intel -o src/main/exampleDSA.asm src/main/exampleDSA.c $featureFlags

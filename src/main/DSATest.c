@@ -1,6 +1,7 @@
 #include "DSATest.h"
 
 int main(int argc, char *argv[]) {
+    uint8_t switchIndex; 
     detailedAssert((argc==4),"Main() - Not enough input arguments specified (./program bufferSize resfile mode).");
     srand(time(NULL));
     detailedAssert((atoi(argv[3])>=0 && atoi(argv[3])<NUM_MODES),"Main() - 'Mode' Num Invalid.");
@@ -11,24 +12,62 @@ int main(int argc, char *argv[]) {
     detailedAssert((bufferSize%64==0),"Main() - Please specify bufferSize that is a factor of 64.");
     //printf("Debug: bufferSize = %lu\n", bufferSize);
 
-    switch (mode) {
-        case 0: // singleCold
-            /*******************/
-            // Module/Baseline Fn Tests
-            resArr[CmemIndx] = single_memcpyC(bufferSize);
-            resArr[ASMmovqIndx] = single_movqInsASM(bufferSize);
-            resArr[SSE1Indx] = single_SSE1movaps(bufferSize);
-            resArr[SSE2Indx] = single_SSE2movdqa(bufferSize);
-            resArr[SSE4Indx] = single_SSE4movntdq(bufferSize);
-            resArr[AVX256Indx] = single_AVX256(bufferSize);
-            resArr[AVX5_32Indx] = single_AVX512_32(bufferSize);
-            resArr[AVX5_64Indx] = single_AVX512_64(bufferSize);
+    // Clear Caches and TLB
+    //floodHelperFn();
 
-            // Intel DSA Fns
-            single_DSADescriptorInit();
-            single_DSADescriptorSubmit();
-            single_DSACompletionCheck();
-            /*******************/
+    switch (mode) 
+    {
+        case 0: // Run Mode = singleCold //
+
+            // Mix up the order of these to minimize optimizations 
+            switchIndex = globalAgitator%9;
+            for(int i=0; i<9; i++)
+            {
+                switch (switchIndex) 
+                {
+                    /*******************/
+                    // Module/Baseline Fn Tests
+                    case 0:
+                        resArr[CmemIndx] = single_memcpyC(bufferSize);
+                        break;
+                    case 1:
+                        resArr[ASMmovqIndx] = single_movqInsASM(bufferSize);
+                        break;
+                    case 2:
+                        resArr[SSE1Indx] = single_SSE1movaps(bufferSize);
+                        break;
+                    case 3:
+                        resArr[SSE2Indx] = single_SSE2movdqa(bufferSize);
+                        break;
+                    case 4:
+                        resArr[SSE4Indx] = single_SSE4movntdq(bufferSize);
+                        break;
+                    case 5:
+                        resArr[AVX256Indx] = single_AVX256(bufferSize);
+                        break;
+                    case 6:
+                        resArr[AVX5_32Indx] = single_AVX512_32(bufferSize);
+                        break;
+                    case 7:
+                        resArr[AVX5_64Indx] = single_AVX512_64(bufferSize);
+                        break;
+
+                    case 8:
+                        // Intel DSA Fns
+                        single_DSADescriptorInit();
+                        single_DSADescriptorSubmit();
+                        single_DSACompletionCheck();
+                        break;
+
+                    default:
+                        detailedAssert(false, "Main(): Switch 0 - Invalid Index.");
+                        break;
+                }
+
+                // Should only run each case once.
+                switchIndex++;
+                switchIndex %= 9;
+            }
             break;
         default:
             printf("DEBUG: ARGV=%s, Mode=%d.\n", atoi(argv[3]), mode);

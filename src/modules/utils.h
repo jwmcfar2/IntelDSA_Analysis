@@ -10,22 +10,23 @@
 #define ANTI_OPT __attribute__((always_inline)) inline volatile
 #define PAGE_SIZE 4096
 #define LL_NODE_PADDING (PAGE_SIZE - sizeof(void*))
-#define UINT32_MAX 4294967295
+#define UINT32_MAXVAL 4294967295
 #define L1I_KB 32
 #define L1D_KB 64
 #define L2_KB 2048
 #define L3_KB 53760
 
-// System Profile Vars
-//uint64_t Cold_Miss_Latency=0;
-uint64_t L1d_Miss_Latency=0;
-//uint64_t L2_Miss_Latency=0;
-//uint64_t L3_Miss_Latency=0;
-uint64_t L1TLB_Miss_Latency=0;
-//uint64_t L2TLB_Miss_Latency=0;
+// LL Entry Structure
+typedef struct ListNode {
+    struct ListNode* next;
+    char bytes[LL_NODE_PADDING];
+} ListNode;
 
-uint64_t L1TLB_Entries=0;
-//uint64_t L2TLB_Entries=0;
+// System Profile Vars
+extern uint64_t L1d_Miss_Latency;
+extern uint64_t L1TLB_Miss_Latency;
+extern uint64_t L1TLB_Entries;
+extern uint64_t globalAgitator;
 
 // Util Fns
 void  volatile  flush(void* p);
@@ -33,11 +34,18 @@ void  volatile  flush2(void* p, void* q);
 void            detailedAssert(bool assertRes, const char* msg);
 void            valueCheck(char* src, char* dst, uint64_t size, char* errDetails);
 
-// LL Entry Structure
-typedef struct ListNode {
-    struct ListNode* next;
-    char bytes[LL_NODE_PADDING];
-} ListNode;
+void  volatile  calculateL1TLB_Entries();
+void  volatile  floodAllDataCaches();
+void  volatile  floodL1InstrCache();
+void  volatile  setL1DMissLatency();
+void  volatile  floodL1TLB();
+void  volatile  floodHelperFn();
+
+void  volatile  spawnLLNodes(uint32_t numEntries);
+void            fillNodeArr(ListNode *node);
+void            flushLinkedList(ListNode* head);
+void            freeLinkedList(ListNode* head);
+ListNode*       createNode();
 
 // Fns that NEED to be inlined (cant be defined in c file if declared here)
 uint64_t ANTI_OPT rdtscp(){
@@ -49,3 +57,6 @@ uint64_t ANTI_OPT rdtscp(){
                       :: "%rax", "%rbx", "%rcx", "%rdx"); // Clobbers
     return ((uint64_t)high << 32) | low;
 }
+
+void ANTI_OPT compilerMemFence(){asm volatile ("" : : : "memory");}
+void ANTI_OPT cpuMemFence(){asm volatile ("" : : : "memory");}
