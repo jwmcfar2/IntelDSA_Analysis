@@ -118,9 +118,9 @@ void ANTI_OPT single_DSACompletionCheck(){
             continue;
         }
 
-        if(compRec.status & 0x3 == 0x3)
+        if((compRec.status & 3) == 3)
         {
-            printf("\nERROR: Failed due to 'partial completion' from a page fault... I think? (Status=0x%X)\n", compRec.status);
+            printf("\nERROR: Failed due to 'partial completion' from a page fault... I think? (Status & 0x3 = 0x%X)\n", (compRec.status & 3));
             printf("If you wish to exceed page size (usually 4KB), look more into spec - or send separate descriptors\n\n");
             detailedAssert(false, "DSA Completion - Failed to complete transfer.");
         }

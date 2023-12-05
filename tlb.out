@@ -1,0 +1,1680 @@
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false
+   cache and TLB information (2):
+      0xfe: TLB data is in CPUID leaf 0x18
+      translation cache type            = instruction TLB
+      translation cache type            = instruction TLB
+      translation cache type            = store-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = load-only TLB
+      translation cache type            = unified TLB
+      translation cache type            = unified TLB
+   L1 TLB/cache information: 2M/4M pages & L1 TLB (0x80000005/eax):
+   L1 TLB/cache information: 4K pages & L1 TLB (0x80000005/ebx):
+   L2 TLB/cache information: 2M/4M pages & L2 TLB (0x80000006/eax):
+   L2 TLB/cache information: 4K pages & L2 TLB (0x80000006/ebx):
+      INVLPGB supports TLB flush guest nested  = false

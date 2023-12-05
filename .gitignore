@@ -1,6 +1,5 @@
-src/Hw*
-src/hw*
-Hw*
-hw*
+src/main/hw*
 bin/
-results/*
+results/*.png
+results/single_mov/*
+results/bulk_mov/*
