@@ -1,17 +1,3 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
-#include <pthread.h>
-#include <x86intrin.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <smmintrin.h> // Include for SSE4.1 (and earlier) intrinsics
-#include <immintrin.h> // Include for AVX intrinsics
 #include <accel-config/libaccel_config.h> // For accel-config of Intel DSA
 #include <linux/idxd.h> // For important Macros
 
@@ -20,8 +6,8 @@
 
 // Size / settings
 #define PORTAL_SIZE 4096
-#define _headerStr_ "  DSA_EnQ  DSA_memmov   C_memcpy   ASM_movq  SSE1_movaps  "\
-                    "SSE2_mov   SSE4_mov   AVX_256   AVX_512_32 AVX_512_64\n"
+#define _headerStr_ "DSA_EnQ DSA_memmov C_memcpy ASM_movq SSE1_movaps "\
+                    "SSE2_mov SSE4_mov AVX_256 AVX_512_32 AVX_512_64 AMX_LdSt\n"
 
 // Perf Counter Indexes, indexed 0-9 (10 entries -> NUM_TESTS=10)
 typedef enum {
@@ -35,6 +21,7 @@ typedef enum {
     AVX256Indx,
     AVX5_32Indx,
     AVX5_64Indx,
+    AMXIndx,
     NUM_TESTS
 } resIndxEnum;
 
@@ -55,8 +42,8 @@ char* wqPath = "/dev/dsa/wq2.0";
 // Descriptor Data
 struct dsa_completion_record compRec __attribute__((aligned(32)));
 struct dsa_hw_desc descr = {0};
-char* srcDSA;
-char* dstDSA;
+uint8_t* srcDSA;
+uint8_t* dstDSA;
 void* wq_portal;
 
 // Program Vars

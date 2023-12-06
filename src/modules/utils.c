@@ -32,7 +32,7 @@ void detailedAssert(bool assertRes, const char* msg){
     }
 }
 
-void valueCheck(char* src, char* dst, uint64_t size, char* errDetails)
+void valueCheck(uint8_t* src, uint8_t* dst, uint64_t size, char* errDetails)
 {
     char* errStr = malloc(strlen(errDetails) + 75 + 1);
     strcpy(errStr, errDetails);

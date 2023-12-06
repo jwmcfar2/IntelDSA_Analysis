@@ -20,8 +20,8 @@ int main(int argc, char *argv[]) {
         case 0: // Run Mode = singleCold //
 
             // Mix up the order of these to minimize optimizations 
-            switchIndex = globalAgitator%9;
-            for(int i=0; i<9; i++)
+            switchIndex = globalAgitator%(NUM_TESTS-1);
+            for(int i=0; i<NUM_TESTS-1; i++)
             {
                 switch (switchIndex) 
                 {
@@ -51,8 +51,11 @@ int main(int argc, char *argv[]) {
                     case 7:
                         resArr[AVX5_64Indx] = single_AVX512_64(bufferSize);
                         break;
-
                     case 8:
+                        resArr[AMXIndx] = single_AMX(bufferSize);
+                        break;
+
+                    case 9:
                         // Intel DSA Fns
                         single_DSADescriptorInit();
                         single_DSADescriptorSubmit();
@@ -60,13 +63,14 @@ int main(int argc, char *argv[]) {
                         break;
 
                     default:
+                        printf("DEBUG: switchNum=%d\n", switchIndex);
                         detailedAssert(false, "Main(): Switch 0 - Invalid Index.");
                         break;
                 }
 
                 // Should only run each case once.
                 switchIndex++;
-                switchIndex %= 9;
+                switchIndex %= (NUM_TESTS-1);
             }
             break;
         default:
@@ -149,6 +153,7 @@ void ANTI_OPT single_DSACompletionCheck(){
     uint64_t failCount=0;
 
     startTime = rdtscp();
+    #pragma unroll
     for(int i=0; i<maxCount; i++)
     {
         if(compRec.status == 0)

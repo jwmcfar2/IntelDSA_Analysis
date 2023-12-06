@@ -3,8 +3,8 @@
 # Make bin/ folder if it doesn't exist
 mkdir -p bin/
 
-# Flags included for these reasons (order matching): DSA, SSE2, SSE4.1, AVX2, AVX-512, AVX-512 Double/Quad Word Support
-featureFlags="-laccel-config -msse2 -msse4.1 -mavx2 -mavx512f -mavx512dq"
+# Flags included for these reasons (order matching): native-architecture, DSA, SSE2, SSE4.1, AVX2, AVX-512, AVX-512 Double/Quad Word Support, AMX
+featureFlags="-march=native -laccel-config -msse2 -msse4.1 -mavx2 -mavx512f -mavx512dq -mamx-tile"
 
 # Flags for compilation: flto = extern inlining support
 compilationFlags=""
@@ -19,11 +19,11 @@ for f in src/main/*.c; do
     outfile=$(basename "${f%.c}")
     if [[ "$f" == *"DSATest"* ]]; then
         objFiles=$(find src/modules/ -name "*.o" | tr '\n' ' ')
-        gcc "$f" $objFiles -o "bin/$outfile" $featureFlags
+        gcc -O0 "$f" $objFiles -o "bin/$outfile" $featureFlags
     elif [[ "$f" == *"DSA"* ]]; then
         gcc -O0 "$f" -o "bin/$outfile" $featureFlags
     else
-        gcc -O0 "$f" -o "bin/$outfile"
+        gcc -O0 "$f" -o "bin/$outfile" $featureFlags
     fi
 done
 

@@ -71,7 +71,7 @@ done
 xLoc=1.2
 xtic_string="set xtics ("
 for i in {0..8}; do
-  xtic_string+="\"${graphAxisNames[i]}\" $xLoc"
+  xtic_string+="\"{/=10.5:Bold ${graphAxisNames[i]}}\" $xLoc"
   xLoc=$(echo "$xLoc + 4.5" | bc)
   [[ $i -lt 8 ]] && xtic_string+=", " # Add comma if it's not the last benchmark
 done
@@ -104,8 +104,8 @@ set key box linestyle 1
 set label "{/=10:Bold Buffer Sizes}" at screen 0.798, 0.58
 
 # Margins configuration
-set lmargin at screen 0.1
-set rmargin at screen 0.95
+set lmargin at screen 0.115
+set rmargin at screen 0.945
 #set tmargin at screen 0.975
 #set bmargin at screen 0.2
 
@@ -113,7 +113,7 @@ set rmargin at screen 0.95
 set title "{/=15:Bold Avg Latency for MemMov Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
 set termoption enhanced
 set ylabel "{/:Bold Normalized Latency}\n{/=10(Baseline=x86'movq')}" offset 1,0
-set xlabel "{/:Bold Instruction Type}" offset 0,1
+set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1000)}" offset 0,-0.5
 set ytics nomirror
 
 # Custom xtics
@@ -152,6 +152,8 @@ EOF
 #exit
 
 rm results/.temp*
+
+echo -e "\nDone! Graph saved to: $outputFile\n"
 
 #rm $dataFile
 #rm $normalizedFile
