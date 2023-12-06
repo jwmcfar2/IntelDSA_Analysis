@@ -26,7 +26,7 @@
 #define L3_KB 53760
 #define AMX_STRIDE 64
 #define AMX_COL_WIDTH 64
-#define AMX_MAX_ROWS 8
+#define AMX_MAX_ROWS 16
 #define AMX_TILE_SIZE 1024
 #define ARCH_GET_XCOMP_PERM     0x1022
 #define ARCH_REQ_XCOMP_PERM     0x1023
