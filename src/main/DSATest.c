@@ -206,16 +206,18 @@ uint8_t ANTI_OPT enqcmd(void *_dest, const void *_src){
 }
 
 void parseResults(char* fileName){
+    char cmdStr[256];
 
     // Open the file in read mode to check if it exists
     FILE *file = fopen(fileName, "r");
 
     // File doesn't exist, create it and write the header
-    if (file == NULL) {
+    if (file == NULL)
+    {
         file = fopen(fileName, "w");
         detailedAssert((file != NULL), "parseResults() - Could not open or create resFile.");
-        fputs(_headerStr_, file);  // Write the header to the new file
-        fclose(file);                 // Close the file after writing the header
+        fputs(_headerStr_, file);
+        fclose(file);
         printf("\n\tCreated new resFile: %s\n\n", fileName);
     } else {
         // File already exists, just close it without modifying - will append later
@@ -225,12 +227,18 @@ void parseResults(char* fileName){
     // Open the file in append mode and add the new line of data
     file = fopen(fileName, "a");
     detailedAssert((file != NULL), "parseResults() - Could not open resFile to append data.");
-    //fputs(dataLine, file);      // Append the new line of data
 
-    for (int i=0; i<NUM_TESTS; i++) {
-        fprintf(file, "   %lu    ", resArr[i]); // Adjust the format specifier if needed
-    }
-    fprintf(file, "\n"); // Append a newline character at the end
+    for (int i=0; i<NUM_TESTS; i++)
+        fprintf(file, "   %lu    ", resArr[i]);
+    
+    fprintf(file, "\n");
 
-    fclose(file);               // Close the file after appending
+    fclose(file);
+
+    // Now, straighten out all the columns:
+    system("touch results/.dsaTemp");
+    snprintf(cmdStr, sizeof(cmdStr), "column -t %s > results/.dsaTemp", fileName);
+    system(cmdStr);
+    snprintf(cmdStr, sizeof(cmdStr), "mv results/.dsaTemp %s", fileName);
+    system(cmdStr);
 }

@@ -44,7 +44,6 @@ done
         continue #printf "1.00\t" # Baseline column has a normalized value of 1
       else
         printf "%.2f\t" "$(bc -l <<< "${cols[$i]}/${cols[3]}")"
-        #echo -e "DEBUG: i=$i, cols[i]=${cols[i]}, cols[3]=${cols[3]}, bc=$(bc -l <<< "${cols[$i]}/${cols[3]}")"
       fi
     done
     echo # Newline after each row of data
@@ -148,13 +147,8 @@ plot \
 
 EOF
 
-# Comment out to allow for deletion of temp files
-#exit
-
-rm results/.temp*
-
 echo -e "\nDone! Graph saved to: $outputFile\n"
 
-#rm $dataFile
-#rm $normalizedFile
-#rm $graphFile
+# Comment out to allow for deletion of temp files
+#exit
+rm results/.temp*

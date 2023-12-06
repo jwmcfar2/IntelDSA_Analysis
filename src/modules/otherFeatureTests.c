@@ -314,6 +314,7 @@ uint64_t volatile single_AMX(uint64_t bufSize){
     // _tile_loadd (N, ... <-- N *cannot* be a variable.
 
     // Load values into a tile
+    startTime=rdtscp();
     _tile_loadd(1, srcAMX[0], AMX_STRIDE);
     if(tileCount >=2)
         _tile_loadd(2, srcAMX[1], AMX_STRIDE);
@@ -330,6 +331,7 @@ uint64_t volatile single_AMX(uint64_t bufSize){
         _tile_stored(3, dstAMX[2], AMX_STRIDE);
     if(tileCount >=4)
         _tile_stored(4, dstAMX[3], AMX_STRIDE);
+    endTime=rdtscp();
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -381,10 +383,7 @@ uint64_t volatile single_AMX(uint64_t bufSize){
     free(srcAMX);
     free(dstAMX);
 
-    printf("DEBUG TEST -- AMX SUCCESS! (%lu)\n", (endTime-startTime));
-
-    // Delete me
-    abort();
+    //printf("DEBUG TEST -- AMX SUCCESS! (%lu)\n", (endTime-startTime));
 
     return (endTime-startTime);
 }

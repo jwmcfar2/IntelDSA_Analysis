@@ -1,5 +1,22 @@
 #!/bin/bash
 
+## Set to fn so it can be called from multiple diff places ###
+### Optional: Set WQ DevFile Permissions ####
+permissionSet(){
+    read -p $'\n- Would you like to set this WQ available to all users (user-space programs)? (y/n): ' userInput
+
+    if [[ $userInput == *[yY]* && $userInput != *[nN]* ]]; then
+        for wq in ${wqIDs[@]}; do
+            sudo chmod 666 /dev/dsa/wq$dsaID.$wq
+            echo -e "\nSet permissions for: /dev/dsa/wq$dsaID.$wq"
+        done
+            echo -e "\nFinished setting all permissions for all WQs!\n"
+    else
+        exit
+    fi
+}
+###############################################################
+
 groupID=0
 wqSettings="--wq-size=32 --priority=1 --block-on-fault=0 --threshold=4 --type=user --name=swq --mode=shared --max-batch-size=32 --max-transfer-size=2097152"
 confFolder="$(pwd)/configs/"
@@ -34,10 +51,10 @@ read -p $'\n- Make Selection\n\t[1] -- Load Existing Config from \"configs/\"\n\
 
 # Load Config
 if [[ userInput -eq 1 ]]; then
-    echo ""
+    echo -e "\nDiscovered .conf files:"
     ls $confFolder
     mostRecentConf=$(ls -t configs/ | head -n1)
-    read -e -p $'\n- Make Selection\n\t[1] -- Load Config: "'"${mostRecentConf}"$'"\n\t[2] -- Manually enter different config\n\t\tSelection (1/2): ' configInput
+    read -e -p $'\n- Make Selection\n\t[1] -- Load Most Recent Config: "'"${mostRecentConf}"$'"\n\t[2] -- Manually Enter Different File Name\n\t\tSelection (1/2): ' configInput
     
     if [[ $configInput != 1 ]]; then
         read -p $'\n\tChoose name of file (\"file.conf\"): ' fileName
@@ -49,6 +66,7 @@ if [[ userInput -eq 1 ]]; then
     accel-config config-device dsa$dsaID
     accel-config load-config -c $confFolder$fileName -e
     echo -e "\nFinished loading config $confFolder$fileName"
+    permissionSet
     exit
 fi
 
@@ -150,10 +168,13 @@ echo -e "Saved this config to: \"$fileName\""
 ################################
 
 ### Optional: Read File Now ####
-read -p $'\n- Load config now?: ' userInput
+read -p $'\n- Load config now? (y/n): ' userInput
 
 if [[ $userInput == *[yY]* && $userInput != *[nN]* ]]; then
     accel-config load-config -c $(pwd)/$fileName -e
     echo -e "\nFinished loading config $(pwd)/$fileName"
+    permissionSet
+else
+    exit
 fi
 ################################
