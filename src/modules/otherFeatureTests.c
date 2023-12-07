@@ -1,7 +1,7 @@
 #include "otherFeatureTests.h"
 
 // ~~~~~~~~ C Memcpy INS ~~~~~~~~ //
-uint64_t volatile single_memcpyC(uint64_t bufSize){
+uint64_t volatile single_memcpyC(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of C 'memcpy' function\n");
     uint64_t startTime, endTime;
 
@@ -10,9 +10,13 @@ uint64_t volatile single_memcpyC(uint64_t bufSize){
     for(int i=0; i<bufSize; i++)
         src[i] = rand()%(255);
 
-    flush2(&src, &dst);
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+    
     startTime=rdtscp();
-
     memcpy(dst, src, bufSize);
     endTime=rdtscp();
     //printf("\t> Completed C 'memcpy' function: Cycles elapsed = %lu cycles.\n", endTime-startTime);
@@ -25,7 +29,7 @@ uint64_t volatile single_memcpyC(uint64_t bufSize){
 }
 
 // ~~~~~~~~ ASM Movq INS ~~~~~~~~ //
-uint64_t volatile single_movqInsASM(uint64_t bufSize){
+uint64_t volatile single_movqInsASM(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of ASM mem mov\n");
     uint64_t startTime, endTime;
         
@@ -35,7 +39,12 @@ uint64_t volatile single_movqInsASM(uint64_t bufSize){
     for(int i=0; i<bufSize; i++)
         src[i] = rand()%(255);
 
-    flush2(&src, &dst);
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+    
     startTime=rdtscp();
     #pragma unroll
     for(int i=0; i<bufSize; i+=8) {
@@ -57,7 +66,7 @@ uint64_t volatile single_movqInsASM(uint64_t bufSize){
 }
 
 // ~~~~~~~~ SSE1 Movaps ~~~~~~~~ //
-uint64_t volatile single_SSE1movaps(uint64_t bufSize){
+uint64_t volatile single_SSE1movaps(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of SSE1 Mov Instruction (movaps)\n");
     uint64_t startTime, endTime;
     
@@ -67,7 +76,12 @@ uint64_t volatile single_SSE1movaps(uint64_t bufSize){
     for(int i=0; i<bufSize; i++)
         src[i] = rand()%(255);
 
-    flush2(&src, &dst);
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+    
     startTime=rdtscp();
     #pragma unroll
     for(int i=0; i<bufSize; i+=16) {
@@ -85,7 +99,7 @@ uint64_t volatile single_SSE1movaps(uint64_t bufSize){
 }
 
 // ~~~~~~~~ SSE2 Movdqa ~~~~~~~~ //
-uint64_t volatile single_SSE2movdqa(uint64_t bufSize){
+uint64_t volatile single_SSE2movdqa(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of SSE2 Mov Instruction (movdqa)\n");
     uint64_t startTime, endTime;
     
@@ -95,7 +109,12 @@ uint64_t volatile single_SSE2movdqa(uint64_t bufSize){
     for(int i=0; i<bufSize; i++)
         src[i] = rand()%(255);
 
-    flush2(&src, &dst);
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+    
     startTime=rdtscp();
     #pragma unroll
     for(int i=0; i<bufSize; i+=16) {  // SSE2 register (128-bit or 16 byte) copy, 256 iterations
@@ -113,7 +132,7 @@ uint64_t volatile single_SSE2movdqa(uint64_t bufSize){
 }
 
 // ~~~~~~~~ SSE4.1 Movntdq (non-temporal) ~~~~~~~~ //
-uint64_t volatile single_SSE4movntdq(uint64_t bufSize){
+uint64_t volatile single_SSE4movntdq(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of SSE4.1 MovToMem Instruction (Movntdq)\n");
     uint64_t startTime, endTime;
     
@@ -123,7 +142,12 @@ uint64_t volatile single_SSE4movntdq(uint64_t bufSize){
     for(int i=0; i<bufSize; i++)
         src[i] = rand()%(255);
 
-    flush2(&src, &dst);
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+    
     startTime=rdtscp();
     // Assuming src and dst are 16-byte aligned and len is a multiple of 16
     #pragma unroll
@@ -150,7 +174,7 @@ uint64_t volatile single_SSE4movntdq(uint64_t bufSize){
 }
 
 // ~~~~~~~~ AVX-256 ~~~~~~~~ //
-uint64_t volatile single_AVX256(uint64_t bufSize){
+uint64_t volatile single_AVX256(uint64_t bufSize, bool primeCache){
     //printf(" || Test Latency of AVX-256 Mov Instruction (vmovdqa)\n");
     uint64_t startTime, endTime;
     
@@ -160,7 +184,12 @@ uint64_t volatile single_AVX256(uint64_t bufSize){
     for(int i=0; i<bufSize; i++)
         src[i] = rand()%(255);
 
-    flush2(&src, &dst);
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+
     startTime=rdtscp();
     #pragma unroll
     for(int i=0; i<bufSize; i+=32) {
@@ -178,7 +207,7 @@ uint64_t volatile single_AVX256(uint64_t bufSize){
 }
 
 // ~~~~~~~~ AVX-512 32-bit ~~~~~~~~ //
-uint64_t volatile single_AVX512_32(uint64_t bufSize){
+uint64_t volatile single_AVX512_32(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of AVX-512 (32-bit) Mov Ins (vmovdqa32)\n");
     uint64_t startTime, endTime;
     
@@ -188,7 +217,12 @@ uint64_t volatile single_AVX512_32(uint64_t bufSize){
     for(int i=0; i<bufSize; i++)
         src[i] = rand()%(255);
 
-    flush2(&src, &dst);
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+
     startTime=rdtscp();
     #pragma unroll
     for(int i=0; i<bufSize; i+=64) {
@@ -206,7 +240,7 @@ uint64_t volatile single_AVX512_32(uint64_t bufSize){
 }
 
 // ~~~~~~~~ AVX-512 64-bit ~~~~~~~~ //
-uint64_t volatile single_AVX512_64(uint64_t bufSize){
+uint64_t volatile single_AVX512_64(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of AVX-512 (64-bit) Mov Ins (vmovdqa64)\n");
     uint64_t startTime, endTime;
     
@@ -216,7 +250,12 @@ uint64_t volatile single_AVX512_64(uint64_t bufSize){
     for(int i=0; i<bufSize; i++)
         src[i] = rand()%(255);
 
-    flush2(&src, &dst);
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+
     startTime=rdtscp();
     #pragma unroll
     for(int i=0; i<bufSize; i+=64) {
@@ -234,7 +273,7 @@ uint64_t volatile single_AVX512_64(uint64_t bufSize){
 }
 
 // ~~~~~~~~ AMX LD/ST Tiles ~~~~~~~~ //
-uint64_t volatile single_AMX(uint64_t bufSize){
+uint64_t volatile single_AMX(uint64_t bufSize, bool primeCache){
     uint64_t startTime, endTime;
     uint16_t tilePartial;
     uint8_t rowPartial, tileCount, adjustedRows;
@@ -259,15 +298,13 @@ uint64_t volatile single_AMX(uint64_t bufSize){
     }
 
     // ~~~ INITIALIZE TILE CONFIGS ~~~ //
-    // You have to initialize tileNeeded+1 -- I have NO idea why, didn't read manual (and sample
-    // AMX code doesn't explain). I do know, if you only init tiles=tilesNeeded, it fails...
     tileCFG.palette_id = 1;
     tileCFG.start_row = 0;
-    for (int i=0; i<tileCount+1; i++)
+    for (int i=0; i<tileCount; i++)
     {
         //Try to make the final row for our src/dst, only 'rowPartial' 
         //NOTE: Remember the *actual* last tile I don't know what it is...
-        if(i==tileCount-1)
+        if(i==tileCount-1 && tilePartial)
         {
             tileCFG.colsb[i] = AMX_COL_WIDTH;
             tileCFG.rows[i] =  rowPartial;
@@ -277,7 +314,7 @@ uint64_t volatile single_AMX(uint64_t bufSize){
         tileCFG.colsb[i] = AMX_COL_WIDTH;
         tileCFG.rows[i] =  AMX_MAX_ROWS;
     }
-    _tile_loadconfig (&tileCFG);
+    _tile_loadconfig(&tileCFG);
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -299,38 +336,59 @@ uint64_t volatile single_AMX(uint64_t bufSize){
     }
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
-
-    // To be fair against other tests, flush
-    for(int i=0; i<tileCount; i++)
+    // Either prime the cache with these, or flush them from cache
+    // *SHOULD* already be cached, but do again anyways...
+    if(primeCache)
     {
-        flush(srcAMX[i]);
-        flush(dstAMX[i]);
+        for(int i=0; i<tileCount; i++)
+        {
+            adjustedRows=AMX_MAX_ROWS;
+            if(i==tileCount-1)
+                adjustedRows=rowPartial;
+            
+            for(int j=0; j<adjustedRows; j++)
+            {
+                for(int k=0; k<AMX_COL_WIDTH; k++)
+                {
+                    globalAgitator += srcAMX[i][j*AMX_COL_WIDTH + k];
+                    globalAgitator += dstAMX[i][j*AMX_COL_WIDTH + k];
+                    globalAgitator %= 128;
+                }
+            }
+        }
+        globalAgitator %= 20;
+    }else{
+        for(int i=0; i<tileCount; i++)
+        {
+            flush(srcAMX[i]);
+            flush(dstAMX[i]);
+        }
+        flush(srcAMX);
+        flush(dstAMX);
     }
-    flush(srcAMX);
-    flush(dstAMX);
 
     // ~~~~ LOAD/ST TILES ('AMX Mem Mov') ~~~~~ //
     // NOTE: We HAVE to do it this way, because:
     // _tile_loadd (N, ... <-- N *cannot* be a variable.
-
+    //
     // Load values into a tile
     startTime=rdtscp();
-    _tile_loadd(1, srcAMX[0], AMX_STRIDE);
+    _tile_loadd(0, srcAMX[0], AMX_STRIDE);
     if(tileCount >=2)
-        _tile_loadd(2, srcAMX[1], AMX_STRIDE);
+        _tile_loadd(1, srcAMX[1], AMX_STRIDE);
     if(tileCount >=3)
-        _tile_loadd(3, srcAMX[2], AMX_STRIDE);
+        _tile_loadd(2, srcAMX[2], AMX_STRIDE);
     if(tileCount >=4)
-        _tile_loadd(4, srcAMX[3], AMX_STRIDE);
+        _tile_loadd(3, srcAMX[3], AMX_STRIDE);
 
     // Store tile values into mem location
-    _tile_stored(1, dstAMX[0], AMX_STRIDE);
+    _tile_stored(0, dstAMX[0], AMX_STRIDE);
     if(tileCount >=2)
-        _tile_stored(2, dstAMX[1], AMX_STRIDE);
+        _tile_stored(1, dstAMX[1], AMX_STRIDE);
     if(tileCount >=3)
-        _tile_stored(3, dstAMX[2], AMX_STRIDE);
+        _tile_stored(2, dstAMX[2], AMX_STRIDE);
     if(tileCount >=4)
-        _tile_stored(4, dstAMX[3], AMX_STRIDE);
+        _tile_stored(3, dstAMX[3], AMX_STRIDE);
     endTime=rdtscp();
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
@@ -382,8 +440,6 @@ uint64_t volatile single_AMX(uint64_t bufSize){
     }
     free(srcAMX);
     free(dstAMX);
-
-    //printf("DEBUG TEST -- AMX SUCCESS! (%lu)\n", (endTime-startTime));
 
     return (endTime-startTime);
 }

@@ -13,25 +13,32 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/types.h>
+#include <linux/idxd.h>
 #pragma once
 
-// Useful MACROS
-#define ANTI_OPT __attribute__((always_inline)) inline volatile
-#define PAGE_SIZE 4096
-#define LL_NODE_PADDING (PAGE_SIZE - sizeof(void*))
-#define UINT32_MAXVAL 4294967295
-#define L1I_KB 32
-#define L1D_KB 64
-#define L2_KB 2048
-#define L3_KB 53760
-#define AMX_STRIDE 64
-#define AMX_COL_WIDTH 64
-#define AMX_MAX_ROWS 16
-#define AMX_TILE_SIZE 1024
-#define ARCH_GET_XCOMP_PERM     0x1022
-#define ARCH_REQ_XCOMP_PERM     0x1023
-#define XFEATURE_XTILECFG       17
-#define XFEATURE_XTILEDATA      18
+// Mutex typedefs
+typedef pthread_mutex_t  _MX;
+typedef pthread_cond_t   _MX_CND;
+#define   _MX_INIT      PTHREAD_MUTEX_INITIALIZER
+#define   _MX_CND_INIT  PTHREAD_COND_INITIALIZER
+
+// Useful Macros
+#define ANTI_OPT        __attribute__((always_inline)) inline volatile
+#define LL_NODE_PADDING (4096 - sizeof(void*))
+#define PAGE_SIZE       4096
+#define UINT32_MAXVAL   4294967295
+#define L1I_KB          32
+#define L1D_KB          64
+#define L2_KB           2048
+#define L3_KB           53760
+#define AMX_STRIDE            64
+#define AMX_COL_WIDTH         64
+#define AMX_MAX_ROWS          16
+#define AMX_TILE_SIZE         1024
+#define ARCH_GET_XCOMP_PERM   0x1022
+#define ARCH_REQ_XCOMP_PERM   0x1023
+#define XFEATURE_XTILECFG     17
+#define XFEATURE_XTILEDATA    18
 
 // LL Entry Structure
 typedef struct ListNode {
@@ -58,6 +65,7 @@ extern uint64_t globalAgitator;
 // Util Fns
 void  volatile  flush(void* p);
 void  volatile  flush2(void* p, void* q);
+void  volatile  prime2(uint8_t *src, uint8_t *dst, uint64_t size);
 void            detailedAssert(bool assertRes, const char* msg);
 void            valueCheck(uint8_t* src, uint8_t* dst, uint64_t size, char* errDetails);
 
@@ -86,4 +94,3 @@ uint64_t ANTI_OPT rdtscp(){
 }
 
 void ANTI_OPT compilerMemFence(){asm volatile ("" : : : "memory");}
-void ANTI_OPT cpuMemFence(){asm volatile ("" : : : "memory");}

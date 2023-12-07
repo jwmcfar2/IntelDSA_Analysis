@@ -1,2 +1,0 @@
-DSA_EnQ  DSA_memmov  C_memcpy  ASM_movq  SSE1_movaps  SSE2_mov  SSE4_mov  AVX_256  AVX_512_32  AVX_512_64  AMX_LdSt
-7640     10090       4230      2928      2392         3648      3212      2382     2040        2388        53800

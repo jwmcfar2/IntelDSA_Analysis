@@ -24,6 +24,16 @@ void volatile flush2(void* p, void* q){
         : "rax");
 }
 
+void volatile prime2(uint8_t *src, uint8_t *dst, uint64_t size){
+    for(int i=0; i<size; i++)
+    {
+        globalAgitator += src[i];
+        globalAgitator += dst[i];
+        globalAgitator %= 128;
+    }
+    globalAgitator %= 20;
+}
+
 void detailedAssert(bool assertRes, const char* msg){
     if(!assertRes)
     {

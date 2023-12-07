@@ -5,6 +5,8 @@ runFile="bin/DSATest"
 cpuAffin="7"
 
 bufferSizes=(64 128 256 512 1024 2048 4096) #8192 16384 32768 65536 131072) # Issue with Page Size Faults for single enQ DSA
+#bufferSizes=(4096 2048 1024 512 256 128 64) #128 256 512 1024 2048 4096)
+#bufferSizes=(2048 1024 128 4096 512 256 64) # Shuffle around
 bufferSizeSuffix=("B" "KB")
 bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
 modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
@@ -49,9 +51,27 @@ for bufferSize in ${bufferSizes[@]}; do
     echo -e "\nRunning $runCount ${modeType[runMode]}/${bufferType[runMode]}-Mode Tests for ${sizeSubstr}-sized Buffer..."
 
     # Run actual tests $runCount times - in a SERIAL implementation, split off from this script
+    #lowerCPU=0
+    #upperCPU=5
+    #gap=40
+    #mod1=70
+    #mod2=110
+    #./debug.sh $runCount $runFile $bufferSize $outputResFile $runMode
     for ((i=0; i<runCount; i++)); do
-        taskset -c $cpuAffin $runFile $bufferSize $outputResFile $runMode &
+        #taskset -c $cpuAffin $runFile $bufferSize $outputResFile $runMode &
+        #wait $!
+        $runFile $bufferSize $outputResFile $runMode &
+        #sleep 0.02 # sleep for 20ms -- Otherwise mutex fails ~ 1/250 runs
         wait $!
+        #sleep 0.1
+        #lowerCPU=$((lowerCPU + gap))
+        #((lowerCPU %= mod1))
+        #upperCPU=$((lowerCPU + gap))
+        #((upperCPU %= mod2))
+        #bin/exampleAMX & # Aggitation Script May fix this???
+        #wait $!
+        #sleep 0.1
+        #taskset -c 6,7 $runFile $bufferSize $outputResFile $runMode  
     done
 
     mv $outputResFile ".tempFile.out"
