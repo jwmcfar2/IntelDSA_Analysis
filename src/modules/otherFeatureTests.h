@@ -20,3 +20,5 @@ uint64_t  volatile  single_AVX512_32(uint64_t bufSize, bool primeCache);
 uint64_t  volatile  single_AVX512_64(uint64_t bufSize, bool primeCache);
 uint64_t  volatile  single_AMX(uint64_t bufSize, bool primeCache);
 bool      volatile  syscall_use_tile();
+uint64_t  volatile  single_clflush(uint64_t bufSize, bool primeCache);
+uint64_t  volatile  single_clflushopt(uint64_t bufSize, bool primeCache);

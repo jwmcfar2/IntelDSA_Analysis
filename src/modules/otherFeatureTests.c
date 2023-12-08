@@ -1,5 +1,9 @@
 #include "otherFeatureTests.h"
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~ Mem Mv Fns ~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+
 // ~~~~~~~~ C Memcpy INS ~~~~~~~~ //
 uint64_t volatile single_memcpyC(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of C 'memcpy' function\n");
@@ -393,40 +397,6 @@ uint64_t volatile single_AMX(uint64_t bufSize, bool primeCache){
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-    // DEBUG PRINT FOR SRC/DST LOCATIONS:
-    /*printf("\nAFTER...\n");
-    printf("\nTest3Src[0]:\n\t");
-    for(int i=0; i<tileCount; i++)
-    {
-        for(int j=0; j<AMX_MAX_ROWS; j++)
-        {
-            for(int k=0; k<AMX_COL_WIDTH; k++)
-            {
-                printf("%u ", srcAMX[i][j*AMX_COL_WIDTH+k]);
-                if(srcAMX[i][j*AMX_COL_WIDTH+k]<10)
-                    printf(" ");
-                if(k!=0 && k%32==31)
-                    printf("\n\t");
-            }
-        }
-    }
-
-    printf("\nTest3Dst[0]:\n\t");
-    for(int i=0; i<tileCount; i++)
-    {
-        for(int j=0; j<AMX_MAX_ROWS; j++)
-        {
-            for(int k=0; k<AMX_COL_WIDTH; k++)
-            {
-                printf("%u ", dstAMX[i][j*AMX_COL_WIDTH+k]);
-                if(dstAMX[i][j*AMX_COL_WIDTH+k]<10)
-                    printf(" ");
-                if(k!=0 && k%32==31)
-                    printf("\n\t");
-            }
-        }
-    }*/
-
     // Check values for all tiles
     for(int i=0; i<tileCount; i++)
         valueCheck(srcAMX[i], dstAMX[i], AMX_TILE_SIZE, "[AMX Tile Ld/St] ");
@@ -447,4 +417,57 @@ uint64_t volatile single_AMX(uint64_t bufSize, bool primeCache){
 bool volatile syscall_use_tile()
 {
     return (!syscall(SYS_arch_prctl, ARCH_REQ_XCOMP_PERM, XFEATURE_XTILEDATA));
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~ Cache Flush Fns ~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+
+// clflush
+uint64_t volatile single_clflush(uint64_t bufSize, bool primeCache){
+    uint64_t startTime, endTime;
+    dst=malloc(bufSize);
+
+    // Init arr, and pull all of it into cache:
+    for (int i=0; i<bufSize; i++)
+        dst[i] = rand()%(255);
+
+    startTime = rdtscp();
+    #pragma unroll
+    for (int i=0; i<bufSize; i+=64) {
+        asm volatile ("clflush 0(%0)\n"
+            :
+            : "c" (&dst[i])
+            : "rax");
+    }
+    endTime = rdtscp();
+
+    free(dst);
+    return (endTime-startTime);
+}
+
+// clflushopt
+uint64_t volatile single_clflushopt(uint64_t bufSize, bool primeCache){
+    uint64_t startTime, endTime;
+    dst=malloc(bufSize);
+    
+    // Init arr, and pull all of it into cache:
+    for (int i=0; i<bufSize; i++)
+        dst[i] = rand()%(255);
+
+    startTime = rdtscp();
+    #pragma unroll
+    for (int i=0; i<bufSize; i+=64) {
+        // Use inline assembly to flush the cache line containing dst[i].
+        __asm__ volatile (
+            "clflushopt (%0)"
+            :
+            : "r" (&dst[i])
+            : "memory"
+        );
+    }
+    endTime = rdtscp();
+    
+    free(dst);
+    return (endTime-startTime);
 }

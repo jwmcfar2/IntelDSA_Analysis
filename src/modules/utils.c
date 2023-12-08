@@ -74,7 +74,7 @@ void volatile flushHelperFn(){
 }
 
 void volatile floodHelperFn(){
-    //floodAllDataCaches();
+    floodAllDataCaches();
     //compilerMemFence();
     //floodL1InstrCache();
     //compilerMemFence();
@@ -82,6 +82,101 @@ void volatile floodHelperFn(){
     // It takes so many LL Nodes to flood L2/L3, the TLBs will surely be flooded indirectly...
     //floodL1TLB();
     //compilerMemFence();
+}
+
+void volatile profileCacheLatency(){
+    uint64_t randIndex, randVal, start, end;
+    uint64_t avgLLCMissLatency=0, avgHitLatency=0, avgFRLatency=0;
+    uint64_t randArr0[4*1024], randArr1[4*1024], randArr2[4*1024], randArr3[4*1024];
+    uint64_t dummyArr[4*1024];
+    int runs=10000;
+
+    // Try to get a relatively fair Cold Miss Latency
+    for(int i=0; i<10; i++)
+    {
+        uint64_t randSwitch = rand()%4;
+
+        switch(randSwitch){
+            case 0:
+                randIndex = rand()%(4*1024);
+                randVal = rand()%(1024);
+
+                start = rdtscp();
+                randArr0[randIndex] = randVal;
+                end = rdtscp();
+
+                avgLLCMissLatency+=(end-start);
+                flush(&randArr0[randIndex]);
+                break;
+            case 1:
+                randIndex = rand()%(4*1024);
+                randVal = rand()%(1024);
+
+                start = rdtscp();
+                randArr1[randIndex] = randVal;
+                end = rdtscp();
+
+                avgLLCMissLatency+=(end-start);
+                flush(&randArr1[randIndex]);
+                break;
+            case 2:
+                randIndex = rand()%(4*1024);
+                randVal = rand()%(1024);
+
+                start = rdtscp();
+                randArr2[randIndex] = randVal;
+                end = rdtscp();
+
+                avgLLCMissLatency+=(end-start);
+                flush(&randArr2[randIndex]);
+                break;
+            case 3:
+                randIndex = rand()%(4*1024);
+                randVal = rand()%(1024);
+
+                start = rdtscp();
+                randArr3[randIndex] = randVal;
+                end = rdtscp();
+
+                avgLLCMissLatency+=(end-start);
+                flush(&randArr3[randIndex]);
+                break;            
+        }
+    }
+    //setLLCMissLatency(avgLLCMissLatency/10);
+
+    // Profile our system - so we know the average latency of a true cache hit versus the
+    // latency of a miss after we flush the cache of the address (NOT A TRUE COLD MISS)
+    printf("Profiling Cache Hit vs Miss Latency (%d runs)...\n", runs);
+    for(int i=0; i<runs; i++)
+    {
+        randIndex = rand()%(4*1024);
+
+        // Cold miss - Pull address into cache
+        randVal = rand()%(1024);
+        dummyArr[randIndex] = randVal;
+
+        // Measure the time of a hit
+        randVal = rand()%(1024);
+        start = rdtscp();
+        dummyArr[randIndex] = randVal;
+        end = rdtscp();
+        avgHitLatency += end-start;
+
+        // Flush - measure latency from reload
+        flush(&dummyArr[randIndex]);
+        randVal = rand()%(1024);
+        start = rdtscp();
+        dummyArr[randIndex] = randVal;
+        end = rdtscp();
+        avgFRLatency += end-start;
+    }
+    L1d_Hit_Latency=(avgHitLatency/runs);
+    //setL1dHitLatency(avgHitLatency/runs);
+    //setFlushReloadLatency(avgFRLatency/runs);
+    printf("DEBUG: Avg Cache Hit Latency (Cycles)    =  %ld\n", avgHitLatency/runs);
+    printf("DEBUG: Avg Flush+Reload Latency (Cycles) =  %ld\n", avgFRLatency/runs);
+    printf("DEBUG: Avg LLC Miss Latency (Cycles)     =  %ld\n", avgLLCMissLatency/10);
 }
 
 void volatile calculateL1TLB_Entries(){

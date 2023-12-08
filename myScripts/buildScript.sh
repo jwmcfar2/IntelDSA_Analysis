@@ -17,7 +17,7 @@ done
 # Now compile DSA-based programs with DSA config libraries
 for f in src/main/*.c; do
     outfile=$(basename "${f%.c}")
-    if [[ "$f" == *"DSATest"* ]]; then
+    if [[ "$(basename "$f")" == DSA* ]]; then
         objFiles=$(find src/modules/ -name "*.o" | tr '\n' ' ')
         gcc -O0 "$f" $objFiles -o "bin/$outfile" $featureFlags
     elif [[ "$f" == *"DSA"* ]]; then
@@ -28,6 +28,6 @@ for f in src/main/*.c; do
 done
 
 # DEBUG
-gcc -g -O0 src/main/DSATest.c $objFiles $featureFlags -o bin/debug 
+#gcc -g -O0 src/main/DSATest.c $objFiles $featureFlags -o bin/debug 
 #gcc $objFiles -S -fverbose-asm -masm=intel -o src/main/DSATest.asm src/main/DSATest.c $featureFlags
 #gcc -S -fverbose-asm -masm=intel -o src/main/exampleDSA.asm src/main/exampleDSA.c $featureFlags

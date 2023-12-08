@@ -1,4 +1,4 @@
-#include "DSAMemMvTest.h"
+#include "DSAFlushTest.h"
 
 int main(int argc, char *argv[]) {
     uint8_t switchIndex;
@@ -9,9 +9,14 @@ int main(int argc, char *argv[]) {
     detailedAssert((atoi(argv[3])>=0 && atoi(argv[3])<NUM_MODES),"Main() - 'Mode' Num Invalid.");
     mode = (modeEnum)atoi(argv[3]);
     bufferSize = (unsigned int)strtoul(argv[1], NULL, 10);
-    detailedAssert((bufferSize%64==0 && bufferSize<=4096),"Main() - Please specify bufferSize that is a factor of 64, and <= 4096.");
+    detailedAssert((bufferSize%64==0),"Main() - Please specify bufferSize that is a factor of 64, and <= 4096."); //  && bufferSize<=4096
+
+    printf("SELF NOTE - NEED TO FIGURE OUT PTHREADS FOR THIS. TIMING ACTUAL FINISHED FLUSH OP\n");
+    printf("IS PRETTY MUCH IMPOSSIBLE WITHOUT CONSTANTLY CHECKING FOR A DIFFERENCE IN CACHE LATENCY NON-SERIALIZED\n");
+    printf("(WHICH WOULD BRING IT BACK INTO CACHE) - MAYBE DO A DANGEROUS IMPLEMENTATION WITHOUT LOCKS/SLEEP()?\n");
 
     // Try to Clear Caches and TLB
+    profileCacheLatency();
     floodHelperFn();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -26,25 +31,31 @@ int main(int argc, char *argv[]) {
             switchIndex = globalAgitator%(NUM_TESTS-1); // (DSA EnQ / DSA Memcpy are grouped, so: NUM_TESTS-1)
             for(int i=0; i<NUM_TESTS-1; i++)
             {
+                //#define _headerStr_ "DSA_EnQ DSA_flush clflushopt clflush\n"
                 switch (switchIndex) 
                 {
                     /*******************/
                     // Module/Baseline Fn Tests
-                    case 0: // C Mem Cp
-                        resArr[CmemIndx] = single_memcpyC(bufferSize, mode);
+                    case 0: // clflushopt
+                        printf("DEBUG: Sw0\n");
+                        resArr[clflushoptIndx] = single_clflushopt(bufferSize, mode);
                         break;
-                    case 1: // ASM movq
-                        resArr[ASMmovqIndx] = single_movqInsASM(bufferSize, mode);
+                    case 1: // clflush
+                        printf("DEBUG: Sw1\n");
+                        resArr[clflushIndx] = single_clflush(bufferSize, mode);
                         break;
 
-                    case 9: // DSA Mem cp
+                    case 2: // DSA flush op
+                        printf("DEBUG: Sw2\n");
                         descriptorRetry=1;
                         while(descriptorRetry)
                         {
+                            printf("\t> DEBUG: Sw2a\n");
                             single_DSADescriptorInit();
                             compilerMemFence();
                             descriptorRetry = enqcmd(wq_portal, &descr);
                         }
+                        printf("< DEBUG: Sw2b\n");
                         
                         finalizeDSA();
                         break;
@@ -107,17 +118,17 @@ void ANTI_OPT single_DSADescriptorInit(){
     descr.completion_addr = (uintptr_t)&compRec;
 
     // Send writes to cache, not mem
-    descr.flags |= IDXD_OP_FLAG_CC;
+    //descr.flags |= IDXD_OP_FLAG_CC;
 
     // Init srcDSA
-    srcDSA = aligned_alloc(64, bufferSize);
+    //srcDSA = aligned_alloc(64, bufferSize);
     dstDSA = aligned_alloc(64, bufferSize);
     for(int i=0; i<bufferSize; i++)
-        srcDSA[i] = rand()%(255);
+        dstDSA[i] = rand()%(255);
 
     // Set packet info
     descr.xfer_size = bufferSize;
-    descr.src_addr  = (uintptr_t)srcDSA;
+    //descr.src_addr  = (uintptr_t)srcDSA;
     descr.dst_addr  = (uintptr_t)dstDSA;
 
     // Map this Descriptor (<- user space) to DSA WQ portal (<- specific address space (privileged?))
@@ -128,14 +139,14 @@ void ANTI_OPT single_DSADescriptorInit(){
 
 // Verify transfer, free the memory, and store perf counters
 void ANTI_OPT finalizeDSA(){
-    valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
+    //valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
 
     munmap(wq_portal, PORTAL_SIZE);
-    free(srcDSA);
+    //free(srcDSA);
     free(dstDSA);
 
     resArr[DSAenqIndx]  = endTimeEnQ-startTimeEnQ;
-    resArr[DSAmovRIndx] = endTimeDSA-startTimeDSA;
+    resArr[DSAFlushIndx] = endTimeDSA-startTimeDSA;
 }
 
 // Actual ASM functionality to send descriptor 
@@ -146,6 +157,7 @@ uint8_t ANTI_OPT enqcmd(void *_dest, const void *_src){
                  "setz %0\t\n"
                  : "=r"(retry) : "a" (_dest), "d" (_src));
     endTimeEnQ = rdtscp();
+    int debug=0;
     while(compRec.status!=1){}
     endTimeDSA = rdtscp();
     startTimeDSA = endTimeEnQ;

@@ -1,4 +1,5 @@
 src/main/hw*
+src/main/example*
 bin/
 results/*.png
 results/single_mov/*

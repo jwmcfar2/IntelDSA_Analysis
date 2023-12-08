@@ -5,22 +5,19 @@
 
 // Size / settings
 #define PORTAL_SIZE 4096
-#define _headerStr_ "DSA_EnQ DSA_memmov C_memcpy ASM_movq SSE1_movaps "\
-                    "SSE2_mov SSE4_mov AVX_256 AVX_512_32 AVX_512_64 AMX_LdSt\n"
+#define _headerStr_ "DSA_EnQ DSA_flush clflushopt clflush\n"
+
+// Pull in externs from utils.h
+uint64_t flushReload_latency;
+uint64_t L1d_Hit_Latency;
+uint64_t LLC_Miss_Latency;
 
 // Perf Counter Indexes, indexed 0-9 (10 entries -> NUM_TESTS=10)
 typedef enum {
     DSAenqIndx, // Starts at 0
-    DSAmovRIndx,
-    CmemIndx,
-    ASMmovqIndx,
-    SSE1Indx,
-    SSE2Indx,
-    SSE4Indx,
-    AVX256Indx,
-    AVX5_32Indx,
-    AVX5_64Indx,
-    AMXIndx,
+    DSAFlushIndx,
+    clflushoptIndx,
+    clflushIndx,
     NUM_TESTS
 } resIndxEnum;
 

@@ -8,6 +8,11 @@
 #define _headerStr_ "DSA_EnQ DSA_memmov C_memcpy ASM_movq SSE1_movaps "\
                     "SSE2_mov SSE4_mov AVX_256 AVX_512_32 AVX_512_64 AMX_LdSt\n"
 
+// Pull in externs from utils.h
+uint64_t flushReload_latency;
+uint64_t L1d_Hit_Latency;
+uint64_t LLC_Miss_Latency;
+
 // Perf Counter Indexes, indexed 0-9 (10 entries -> NUM_TESTS=10)
 typedef enum {
     DSAenqIndx, // Starts at 0

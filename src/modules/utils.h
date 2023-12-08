@@ -59,10 +59,19 @@ typedef struct __tile_config
 } AMXtile;
 
 // System Profile Vars
+extern uint64_t flushReload_latency;
+extern uint64_t L1d_Hit_Latency;
 extern uint64_t L1d_Miss_Latency;
+extern uint64_t LLC_Miss_Latency;
 extern uint64_t L1TLB_Miss_Latency;
 extern uint64_t L1TLB_Entries;
 extern uint64_t globalAgitator;
+
+// Setter Fns
+//void setFlushReloadLatency(uint64_t lat){ flushReload_latency=lat; }
+//void setL1dHitLatency(uint64_t lat){ L1d_Hit_latency=lat; }
+//void setL1dMissLatency(uint64_t lat){ L1d_Miss_Latency=lat; }
+//void setLLCMissLatency(uint64_t lat){ LLC_Miss_Latency=lat; }
 
 // Util Fns
 void  volatile  flush(void* p);
@@ -72,6 +81,7 @@ void  volatile  prime2(uint8_t *src, uint8_t *dst, uint64_t size);
 void            detailedAssert(bool assertRes, const char* msg);
 void            valueCheck(uint8_t* src, uint8_t* dst, uint64_t size, char* errDetails);
 
+void  volatile  profileCacheLatency();
 void  volatile  calculateL1TLB_Entries();
 void  volatile  floodAllDataCaches();
 void  volatile  flushAllDataCaches();

@@ -123,7 +123,7 @@ set rmargin at screen 0.935
 set title "{/=15:Bold Avg Latency for MemMov Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
 set termoption enhanced
 set ylabel "{/:Bold Normalized Latency}\n{/=10(Baseline=x86'movq')}" offset 1,0
-set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=10000)}" offset 0,-0.35
+set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1,000)}" offset 0,-0.35
 set ytics nomirror
 
 # Custom xtics

@@ -39,11 +39,11 @@ for filename in ${outFileArr[@]}; do
     # Calculate the averages for each column
     averages=()
     for i in "${!sums[@]}"; do
-    if [ "$runCount" -ne 0 ]; then
-        averages[i]=$(echo "scale=2; ${sums[i]}/${runCount}" | bc)
-    else
-        averages[i]=0
-    fi
+        if [ "$runCount" -ne 0 ]; then
+            averages[i]=$(echo "scale=2; ${sums[i]}/${runCount}" | bc)
+        else
+            averages[i]=0
+        fi
     done
 
     # Save the averages to a temp file
