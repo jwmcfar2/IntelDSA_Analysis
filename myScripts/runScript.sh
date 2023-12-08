@@ -1,17 +1,33 @@
 #!/bin/bash
-# Quick Syntax = ./runScript [runCount] [runMode]
+#
+# NOTE - DO NOT RUN THIS SCRIPT DIRECTLY!!! TIMINGS WILL BE INACCURATE USE THE 
+# OTHER SCRIPT (initRun.sh) INSTEAD! (something about needing to use separate
+# processes that './runFile &' didnt solve)
+#
+# Quick Syntax = ./runScript [runCount] [runMode] [timeStamp]
 
 runFile="bin/DSATest"
 cpuAffin="7"
 
-bufferSizes=(64 128 256 512 1024 2048 4096) #8192 16384 32768 65536 131072) # Issue with Page Size Faults for single enQ DSA
-#bufferSizes=(4096 2048 1024 512 256 128 64) #128 256 512 1024 2048 4096)
-#bufferSizes=(2048 1024 128 4096 512 256 64) # Shuffle around
+bufferSizes=(64 128 256 512 1024 2048 4096)
 bufferSizeSuffix=("B" "KB")
 bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
 modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
-fileTimeStamp=$(date +"%b%d_%H%M")
 outFileArr=("" "" "" "" "" "" "")
+declare -A runCountsArr # Array to allow us to randomly choose a buffer size.
+currFileIndex=0
+
+fileTimeStamp=$3
+if [[ -z $fileTimeStamp ]]; then
+    echo -e "No timestamp provided. Exiting..."
+    echo -e "NOTE: DO NOT RUN THIS SCRIPT DIRECTLY! USE 'initRun.sh' INSTEAD!\n"
+    exit
+fi
+
+quietFlag=0
+if [[ "$4" == "-q" ]]; then
+    quietFlag=1
+fi
 
 # Check if 'bin/DSATest' exists and is a file
 if [[ ! -f "$runFile" ]]; then
@@ -33,91 +49,79 @@ if [[ -z $runMode || $runMode -lt 0 || $runMode -gt 5 ]]; then
     read -p "Enter run mode number (0-5, defined in DSATest.h): " runMode
 fi
 
-index=0
-for bufferSize in ${bufferSizes[@]}; do
-    sizeSubstr=$bufferSize
+# Initialize each bufferSize run count to 0
+for bufferSize in "${bufferSizes[@]}"; do
+    runCountsArr[$bufferSize]=0
+done
+
+# Randomly choose one of the bufferSizes to perform the test, to further reduce optimization
+while [ ${#bufferSizes[@]} -gt 0 ]; do
+    index=$((RANDOM % ${#bufferSizes[@]}))
+    selectedBufferSize=${bufferSizes[index]}
+    sizeSubstr=$selectedBufferSize
     suffix="B" # Default suffix for bytes
 
-    if [[ $bufferSize -ge 1024 ]]; then
+    if [[ $selectedBufferSize -ge 1024 ]]; then
         # If bufferSize is 1024 or more, convert to kilobytes and change suffix
-        sizeSubstr=$(($bufferSize / 1024))
+        sizeSubstr=$(($selectedBufferSize / 1024))
         suffix="KB"
     fi
-
     sizeSubstr+="$suffix"
+    
+    # Add file name to Arr if it doesn't exist
     outputResFile="results/${bufferType[runMode]}_mov/${sizeSubstr}_${modeType[runMode]}_${fileTimeStamp}.out"
-    outFileArr[index]=$outputResFile
-
-    echo -e "\nRunning $runCount ${modeType[runMode]}/${bufferType[runMode]}-Mode Tests for ${sizeSubstr}-sized Buffer..."
-
-    # Run actual tests $runCount times - in a SERIAL implementation, split off from this script
-    #lowerCPU=0
-    #upperCPU=5
-    #gap=40
-    #mod1=70
-    #mod2=110
-    #./debug.sh $runCount $runFile $bufferSize $outputResFile $runMode
-    for ((i=0; i<runCount; i++)); do
-        #taskset -c $cpuAffin $runFile $bufferSize $outputResFile $runMode &
-        #wait $!
-        $runFile $bufferSize $outputResFile $runMode &
-        #sleep 0.02 # sleep for 20ms -- Otherwise mutex fails ~ 1/250 runs
-        wait $!
-        #sleep 0.1
-        #lowerCPU=$((lowerCPU + gap))
-        #((lowerCPU %= mod1))
-        #upperCPU=$((lowerCPU + gap))
-        #((upperCPU %= mod2))
-        #bin/exampleAMX & # Aggitation Script May fix this???
-        #wait $!
-        #sleep 0.1
-        #taskset -c 6,7 $runFile $bufferSize $outputResFile $runMode  
+    for ((i=0; i<=currFileIndex; i++)); do
+        # String exists in Arr already
+        if [[ "${outFileArr[currFileIndex]}" == "$outputResFile" ]]; then
+            break
+        fi
+        if [[ "${outFileArr[currFileIndex]}" == "" ]]; then
+            outFileArr[currFileIndex]=$outputResFile
+            (( currFileIndex++ ))
+            break
+        fi
     done
+
+    if [[ quietFlag -eq 0 ]]; then
+        echo -e "\nRunning ${modeType[runMode]}/${bufferType[runMode]}-Mode Tests for ${sizeSubstr}-sized Buffer..."
+    fi
+
+    # Run ./myProgram a single time if it hasn't reached 1000 runs yet
+    if [ ${runCountsArr[selectedBufferSize]} -lt $runcount ]; then
+        
+        # Run the test
+        $runFile $selectedBufferSize $outputResFile $runMode &
+        wait $!
+        
+        # Increment the run count for chosen bufferSize
+        runCountsArr[$selectedBufferSize]=$((runCountsArr[$selectedBufferSize] + 1))
+        
+        # Check if it has been run 1000 times and remove it if it has
+        if [ ${runCounts[$selectedBufferSize]} -eq $runcount ]; then
+            # Find the index of the buffer size to be removed
+            for idx in "${!bufferSizes[@]}"; do
+                if [ "${bufferSizes[$idx]}" -eq "$selectedBufferSize" ]; then
+                    # Remove the buffer size from the array by unsetting it
+                    unset bufferSizes[idx]
+                    break
+                fi
+            done
+            # Rebuild bufferSizes array to re-index elements
+            bufferSizes=("${bufferSizes[@]}")
+        fi
+    fi
 
     mv $outputResFile ".tempFile.out"
     cat ".tempFile.out" | column -t > "$outputResFile"
     rm ".tempFile.out"
-    echo -e "\t...Done! Saved/Appended to: \"$outputResFile\""
-    (( index++ ))
-done
-
-############# Now We Get The Avg Of all these tests ####################
-echo ""
-for filename in ${outFileArr[@]}; do
-    # Read the header and store it in an array
-    read -r -a headers < <(head -n 1 "$filename")
-
-    # Prepare an array to hold the sum of each column
-    sums=()
-    for ((i = 0; i < ${#headers[@]}; ++i)); do
-        sums[i]=0
-    done
-
-    # Process the file and sum up each column
-    while read -r -a line; do
-        for ((i = 0; i < ${#line[@]}; ++i)); do
-            sums[i]=$(echo "${sums[i]} + ${line[i]}" | bc)
-        done
-    done < <(tail -n +2 "$filename")  # Skip the header line
-
-    # Calculate the averages for each column
-    averages=()
-    for i in "${!sums[@]}"; do
-    if [ "$runCount" -ne 0 ]; then
-        averages[i]=$(echo "scale=2; ${sums[i]}/${runCount}" | bc)
-    else
-        averages[i]=0
+    if [[ $quietFlag -eq 0 ]]; then
+        echo -e "\t...Done! Saved/Appended to: \"$outputResFile\""
     fi
-    done
-
-    # Save the averages to a temp file
-    {
-        printf "%s " "${headers[@]}"
-        echo
-        printf "%.2f " "${averages[@]}"
-        echo
-    } > "${filename%.out}_unaligned_avg.out"
-    cat "${filename%.out}_unaligned_avg.out" | column -t > "${filename%.out}_avg.out"
-    rm ${filename%.out}_unaligned_avg.out
-    echo -e "Saved Averages to: \"${filename%.out}_avg.out\""
 done
+
+if [[ $quietFlag -eq 0 ]]; then
+    echo -e "\n\t## Reminder: You can pass end of script to quiet script print-statements\n"
+fi
+
+# MOVED AVERAGE TO OTHER SCRIPT
+exit

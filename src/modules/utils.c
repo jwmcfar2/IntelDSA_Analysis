@@ -13,6 +13,19 @@ void volatile flush(void* p){
         : "rax");
 }
 
+void volatile flushLiteral(uint64_t VA){
+    printf("DEBUG-C1: {%lu}\n", VA);
+    void* ptrVA = (void *)VA;
+    printf("DEBUG-C2: {%lu} -- NULL=%s\n", ptrVA, (ptrVA==0)?"True":"False");
+    if(ptrVA==0)
+        return;
+    asm volatile ("clflush 0(%0)\n"
+        :
+        : "c" (VA)
+        : "rax");
+    printf("DEBUG-D: {%lu}\n", VA);
+}
+
 void volatile flush2(void* p, void* q){
     asm volatile ("clflush 0(%0)\n"
         :
@@ -54,6 +67,21 @@ void valueCheck(uint8_t* src, uint8_t* dst, uint64_t size, char* errDetails)
         detailedAssert(false, errStr);
 
     free(errStr);
+}
+
+void volatile flushHelperFn(){
+    flushAllDataCaches();
+}
+
+void volatile floodHelperFn(){
+    //floodAllDataCaches();
+    //compilerMemFence();
+    //floodL1InstrCache();
+    //compilerMemFence();
+
+    // It takes so many LL Nodes to flood L2/L3, the TLBs will surely be flooded indirectly...
+    //floodL1TLB();
+    //compilerMemFence();
 }
 
 void volatile calculateL1TLB_Entries(){
@@ -144,7 +172,17 @@ void volatile floodAllDataCaches(){
 
     //printf("DEBUG: LL_NODE_PADDING=%d, sizeof(void*)=%d\n", LL_NODE_PADDING, sizeof(void*));
 
-    spawnLLNodes(L1D_KB + L2_KB + L3_KB);
+    spawnLLNodes(20000);
+}
+
+void volatile flushAllDataCaches(){
+    // Span entire VA space, 0 -> 2^48, i+=8 for bytes
+    printf("DEBUG-A\n");
+    for(uint64_t i=1; i<MAX_VA_RANGE; i+=8)
+    {
+        printf("DEBUG-B: [%lu]\n", i);
+        flushLiteral(i);
+    }
 }
 
 // CACHE NUMBERS WERE PULLED FROM CPUID LOG ("cpuid -1 > cpuid.log") //
@@ -206,16 +244,6 @@ void volatile floodL1TLB(){
     spawnLLNodes(L1TLB_Entries+1);
 }
 
-void volatile floodHelperFn(){
-    floodAllDataCaches();
-    compilerMemFence();
-    floodL1InstrCache();
-    compilerMemFence();
-
-    // It takes so many LL Nodes to flood L2/L3, the TLBs will surely be flooded indirectly...
-    //floodL1TLB();
-    //compilerMemFence();
-}
 
 void volatile spawnLLNodes(uint32_t numEntries)
 {
@@ -252,6 +280,7 @@ void volatile spawnLLNodes(uint32_t numEntries)
         curr = curr->next;
     }
     globalAgitator %= (globalAgitator+randAgitator+20);
+    flushLinkedList(head);
     freeLinkedList(head);
 }
 

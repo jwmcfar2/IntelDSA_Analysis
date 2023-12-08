@@ -106,11 +106,12 @@ set boxwidth 0.495
 set style line 1 lt 1 lc rgb "black" lw 1
 set key width 1
 set key height 0.4
-set key left top font ",11"
+set key font ",11"
+set key at screen 0.325,0.85
 set key spacing 1.1
 set key samplen 1
 set key box linestyle 1
-set label "{/=10:Bold Buffer Sizes}" at screen 0.138, 0.58
+set label "{/=8:Bold Buffer Sizes}" at screen 0.21, 0.58
 
 # Margins configuration
 set lmargin at screen 0.1255

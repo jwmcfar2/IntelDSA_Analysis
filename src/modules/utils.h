@@ -31,6 +31,8 @@ typedef pthread_cond_t   _MX_CND;
 #define L1D_KB          64
 #define L2_KB           2048
 #define L3_KB           53760
+#define MAX_VA_RANGE    281474976710656
+
 #define AMX_STRIDE            64
 #define AMX_COL_WIDTH         64
 #define AMX_MAX_ROWS          16
@@ -64,6 +66,7 @@ extern uint64_t globalAgitator;
 
 // Util Fns
 void  volatile  flush(void* p);
+void  volatile  flushLiteral(uint64_t VA);
 void  volatile  flush2(void* p, void* q);
 void  volatile  prime2(uint8_t *src, uint8_t *dst, uint64_t size);
 void            detailedAssert(bool assertRes, const char* msg);
@@ -71,10 +74,12 @@ void            valueCheck(uint8_t* src, uint8_t* dst, uint64_t size, char* errD
 
 void  volatile  calculateL1TLB_Entries();
 void  volatile  floodAllDataCaches();
+void  volatile  flushAllDataCaches();
 void  volatile  floodL1InstrCache();
 void  volatile  setL1DMissLatency();
 void  volatile  floodL1TLB();
 void  volatile  floodHelperFn();
+void  volatile  flushHelperFn();
 
 void  volatile  spawnLLNodes(uint32_t numEntries);
 void            fillNodeArr(ListNode *node);

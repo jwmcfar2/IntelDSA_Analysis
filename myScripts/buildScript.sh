@@ -3,9 +3,9 @@
 # Make bin/ folder if it doesn't exist
 mkdir -p bin/
 
-# Flags included for these reasons (order matching): native-architecture, pthreads, DSA, SSE2, SSE4.1, AVX2, AVX-512, AVX-512 Double/Quad Word Support, AMX
-featureFlags="-march=native -lpthread -laccel-config -msse2 -msse4.1 -mavx2 -mavx512f -mavx512dq -mamx-tile"
-
+# Flags included for these reasons (order matching): native-architecture, ~pthreads~, DSA, SSE2, SSE4.1, AVX2, AVX-512, AVX-512 Double/Quad Word Support, AMX
+featureFlags="-march=native -laccel-config -msse2 -msse4.1 -mavx2 -mavx512f -mavx512dq -mamx-tile"
+# -lpthread 
 # Flags for compilation: flto = extern inlining support
 compilationFlags=""
 
@@ -28,6 +28,6 @@ for f in src/main/*.c; do
 done
 
 # DEBUG
-gcc -g src/main/DSATest.c $objFiles -o bin/test_debug $featureFlags
+gcc -g -O0 src/main/DSATest.c $objFiles $featureFlags -o bin/debug 
 #gcc $objFiles -S -fverbose-asm -masm=intel -o src/main/DSATest.asm src/main/DSATest.c $featureFlags
 #gcc -S -fverbose-asm -masm=intel -o src/main/exampleDSA.asm src/main/exampleDSA.c $featureFlags
