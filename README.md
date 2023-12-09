@@ -1,12 +1,19 @@
 # IntelDSA Analysis
 
-Private Repo Exploring Intel DSA Architecture and Analysis
+Repo Exploring Intel Data Streaming Accelerator (DSA) Architecture and Analysis
 
 # Scripts (IntelDSA_Analysis/myScripts/)
 
 Scripts were written with the intention of running them FROM the root folder (IntelDSA_Analysis/), using them from another folder may cause issues. 
 
 I tried to make them as general as possible to maximize different usecases for different users/purposes.
+
+# System Environment
+
+- Red Hat Enterprise Linux release 9.3 (Plow)
+- GCC v11.4.1
+- Any/All Libraries Needed for AVX, AMX, SSE<=4, DSA
+- Root permission needed to initially config DSA (program can be ran via user-space)
 
 # Use DSATest
 
@@ -16,4 +23,11 @@ I tried to make them as general as possible to maximize different usecases for d
 2) For simplicity of my program, I statically defined the WQ I chose in DSATest.h.
 	Modify DSATest.h and change wqPath string to match your WQ
 
-3) Run DSATest (bin/DSATest)
+3) Build code via script: myScripts/buildScript.sh
+
+3) Run DSATests:
+	- All Tests: ./initRun [numTests] [mode] {-q == quiet script prints | Optional}
+	- One Test: bin/DSA... [params]
+
+NOTE: I tried to avoid server-specific/user-specific code when possible, but cannot guarantee it will run as-is on all
+systems that have DSA - some adjustments may be needed (posisbly other source code variables/configs I'm forgetting)

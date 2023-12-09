@@ -1,4 +1,6 @@
 #!/bin/bash
+# syntax: ./initRun [numTests] [mode] {-q == quiet script prints}
+
 count=$1
 mode=$2
 quietFlag=$3
