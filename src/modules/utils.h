@@ -1,3 +1,4 @@
+#define _GNU_SOURCE // Must be defined before any #include
 #include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -14,6 +15,10 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <linux/idxd.h>
+#include <sched.h>
+#include <x86intrin.h>
+#include <smmintrin.h> // Include for SSE4.1 (and earlier) intrinsics
+#include <immintrin.h> // Include for AVX/AMX intrinsics
 #pragma once
 
 // Mutex typedefs
@@ -23,7 +28,6 @@ typedef pthread_cond_t   _MX_CND;
 #define   _MX_CND_INIT  PTHREAD_COND_INITIALIZER
 
 // Useful Macros
-#define ANTI_OPT        __attribute__((always_inline)) inline volatile
 #define LL_NODE_PADDING (4096 - sizeof(void*))
 #define PAGE_SIZE       4096
 #define UINT32_MAXVAL   4294967295
@@ -60,28 +64,29 @@ typedef struct __tile_config
 
 // System Profile Vars
 extern uint64_t flushReload_latency;
+extern uint64_t RTDSC_latency;
 extern uint64_t L1d_Hit_Latency;
-extern uint64_t L1d_Miss_Latency;
 extern uint64_t LLC_Miss_Latency;
-extern uint64_t L1TLB_Miss_Latency;
-extern uint64_t L1TLB_Entries;
 extern uint64_t globalAgitator;
 
-// Setter Fns
-//void setFlushReloadLatency(uint64_t lat){ flushReload_latency=lat; }
-//void setL1dHitLatency(uint64_t lat){ L1d_Hit_latency=lat; }
-//void setL1dMissLatency(uint64_t lat){ L1d_Miss_Latency=lat; }
-//void setLLCMissLatency(uint64_t lat){ LLC_Miss_Latency=lat; }
+// Sys Info Vars
+extern uint64_t nprocs;
+extern uint64_t nprocsMax;
 
 // Util Fns
 void  volatile  flush(void* p);
-void  volatile  flushLiteral(uint64_t VA);
 void  volatile  flush2(void* p, void* q);
 void  volatile  prime2(uint8_t *src, uint8_t *dst, uint64_t size);
 void            detailedAssert(bool assertRes, const char* msg);
 void            valueCheck(uint8_t* src, uint8_t* dst, uint64_t size, char* errDetails);
 
-void  volatile  profileCacheLatency();
+uint64_t        spawnNOPs(uint16_t count);
+uint64_t        rdtsc();
+void            compilerMFence();
+void            cpuMFence();
+void            profileCacheLatency();
+void            profileRDTSC();
+
 void  volatile  calculateL1TLB_Entries();
 void  volatile  floodAllDataCaches();
 void  volatile  flushAllDataCaches();
@@ -97,15 +102,5 @@ void            flushLinkedList(ListNode* head);
 void            freeLinkedList(ListNode* head);
 ListNode*       createNode();
 
-// Fns that NEED to be inlined (cant be defined in c file if declared here)
-uint64_t ANTI_OPT rdtscp(){
-    uint32_t low, high;
-    asm volatile ("RDTSCP\n\t"       // RDTSCP: Read Time Stamp Counter and Processor ID
-                      "mov %%edx, %0\n\t"
-                      "mov %%eax, %1\n\t"
-                      : "=r" (high), "=r" (low)  // Outputs
-                      :: "%rax", "%rbx", "%rcx", "%rdx"); // Clobbers
-    return ((uint64_t)high << 32) | low;
-}
-
-void ANTI_OPT compilerMemFence(){asm volatile ("" : : : "memory");}
+void            spawnThreadOnDiffCore(pthread_t *restrict threadPTR, void* threadFN);
+void            spawnThreadOnSiblingCore(pthread_t *restrict threadPTR, void* threadFN);

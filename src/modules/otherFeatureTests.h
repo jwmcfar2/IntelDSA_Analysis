@@ -1,7 +1,3 @@
-#include <x86intrin.h>
-#include <smmintrin.h> // Include for SSE4.1 (and earlier) intrinsics
-#include <immintrin.h> // Include for AVX/AMX intrinsics
-
 #include "utils.h"
 #pragma once
 

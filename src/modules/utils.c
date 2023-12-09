@@ -47,6 +47,27 @@ void volatile prime2(uint8_t *src, uint8_t *dst, uint64_t size){
     globalAgitator %= 20;
 }
 
+// I use this to "sleep" the main() thread at a ~400 cycle granularity
+uint64_t spawnNOPs(uint16_t count) {
+    for(int i=0; i<count; i++)
+        __asm__ volatile ("nop");
+}
+
+uint64_t rdtsc() {
+    unsigned cycles_high, cycles_low;
+
+    asm volatile ("CPUID\n\t"
+    "RDTSC\n\t"
+    "mov %%edx, %0\n\t"
+    "mov %%eax, %1\n\t": "=r" (cycles_high), "=r" (cycles_low)::
+    "%rax", "%rbx", "%rcx", "%rdx");
+
+    return (((uint64_t)cycles_high << 32) | cycles_low);
+}
+
+void compilerMFence(){asm volatile ("" : : : "memory");}
+void cpuMFence(){_mm_mfence();}
+
 void detailedAssert(bool assertRes, const char* msg){
     if(!assertRes)
     {
@@ -75,21 +96,20 @@ void volatile flushHelperFn(){
 
 void volatile floodHelperFn(){
     floodAllDataCaches();
-    //compilerMemFence();
+    //compilerMFence();
     //floodL1InstrCache();
-    //compilerMemFence();
+    //compilerMFence();
 
     // It takes so many LL Nodes to flood L2/L3, the TLBs will surely be flooded indirectly...
     //floodL1TLB();
-    //compilerMemFence();
+    //compilerMFence();
 }
 
-void volatile profileCacheLatency(){
+void profileCacheLatency(){
     uint64_t randIndex, randVal, start, end;
     uint64_t avgLLCMissLatency=0, avgHitLatency=0, avgFRLatency=0;
-    uint64_t randArr0[4*1024], randArr1[4*1024], randArr2[4*1024], randArr3[4*1024];
-    uint64_t dummyArr[4*1024];
-    int runs=10000;
+    uint64_t randArr0[4*1024], randArr1[4*1024], randArr2[4*1024], randArr3[4*1024], profileArr[4*1024];
+    int runs=100000;
 
     // Try to get a relatively fair Cold Miss Latency
     for(int i=0; i<10; i++)
@@ -101,9 +121,9 @@ void volatile profileCacheLatency(){
                 randIndex = rand()%(4*1024);
                 randVal = rand()%(1024);
 
-                start = rdtscp();
+                start = rdtsc();
                 randArr0[randIndex] = randVal;
-                end = rdtscp();
+                end = rdtsc();
 
                 avgLLCMissLatency+=(end-start);
                 flush(&randArr0[randIndex]);
@@ -112,9 +132,9 @@ void volatile profileCacheLatency(){
                 randIndex = rand()%(4*1024);
                 randVal = rand()%(1024);
 
-                start = rdtscp();
+                start = rdtsc();
                 randArr1[randIndex] = randVal;
-                end = rdtscp();
+                end = rdtsc();
 
                 avgLLCMissLatency+=(end-start);
                 flush(&randArr1[randIndex]);
@@ -123,9 +143,9 @@ void volatile profileCacheLatency(){
                 randIndex = rand()%(4*1024);
                 randVal = rand()%(1024);
 
-                start = rdtscp();
+                start = rdtsc();
                 randArr2[randIndex] = randVal;
-                end = rdtscp();
+                end = rdtsc();
 
                 avgLLCMissLatency+=(end-start);
                 flush(&randArr2[randIndex]);
@@ -134,49 +154,73 @@ void volatile profileCacheLatency(){
                 randIndex = rand()%(4*1024);
                 randVal = rand()%(1024);
 
-                start = rdtscp();
+                start = rdtsc();
                 randArr3[randIndex] = randVal;
-                end = rdtscp();
+                end = rdtsc();
 
                 avgLLCMissLatency+=(end-start);
                 flush(&randArr3[randIndex]);
                 break;            
         }
     }
-    //setLLCMissLatency(avgLLCMissLatency/10);
+    LLC_Miss_Latency=(avgLLCMissLatency/10);
 
     // Profile our system - so we know the average latency of a true cache hit versus the
     // latency of a miss after we flush the cache of the address (NOT A TRUE COLD MISS)
-    printf("Profiling Cache Hit vs Miss Latency (%d runs)...\n", runs);
+    //printf("Profiling Cache Hit vs Miss Latency (%d runs)...\n", runs);
     for(int i=0; i<runs; i++)
     {
         randIndex = rand()%(4*1024);
 
         // Cold miss - Pull address into cache
         randVal = rand()%(1024);
-        dummyArr[randIndex] = randVal;
+        profileArr[randIndex] = randVal;
 
         // Measure the time of a hit
         randVal = rand()%(1024);
-        start = rdtscp();
-        dummyArr[randIndex] = randVal;
-        end = rdtscp();
+        start = rdtsc();
+        profileArr[randIndex] = randVal;
+        end = rdtsc();
         avgHitLatency += end-start;
 
         // Flush - measure latency from reload
-        flush(&dummyArr[randIndex]);
+        flush(&profileArr[randIndex]);
         randVal = rand()%(1024);
-        start = rdtscp();
-        dummyArr[randIndex] = randVal;
-        end = rdtscp();
+        start = rdtsc();
+        profileArr[randIndex] = randVal;
+        end = rdtsc();
         avgFRLatency += end-start;
     }
     L1d_Hit_Latency=(avgHitLatency/runs);
-    //setL1dHitLatency(avgHitLatency/runs);
-    //setFlushReloadLatency(avgFRLatency/runs);
-    printf("DEBUG: Avg Cache Hit Latency (Cycles)    =  %ld\n", avgHitLatency/runs);
-    printf("DEBUG: Avg Flush+Reload Latency (Cycles) =  %ld\n", avgFRLatency/runs);
-    printf("DEBUG: Avg LLC Miss Latency (Cycles)     =  %ld\n", avgLLCMissLatency/10);
+    flushReload_latency=(avgFRLatency/runs);
+
+    //printf("DEBUG: Avg Cache Hit Latency (Cycles)    =  %ld\n", L1d_Hit_Latency);
+    //printf("DEBUG: Avg Flush+Reload Latency (Cycles) =  %ld\n", flushReload_latency);
+    //printf("DEBUG: Avg LLC Miss Latency (Cycles)     =  %ld\n", LLC_Miss_Latency);
+}
+
+void profileRDTSC(){
+    int runs=1000000;
+    uint64_t startTime, endTime;
+    uint64_t avgRDTSCLatency=0;
+
+    // Pull global into cache
+    globalAgitator += rand()%3;
+
+    for(int i=0; i<runs; i++)
+    {
+        startTime = rdtsc();
+        globalAgitator += rdtsc();
+        endTime = rdtsc();
+        avgRDTSCLatency += endTime - startTime;
+
+        globalAgitator %= 50;
+    }
+    RTDSC_latency = avgRDTSCLatency/runs;
+
+    //printf("\nDEBUG: AVG RDTSC CYCLES = %lu cycles\n\n", RTDSC_latency);
+
+    globalAgitator %= 50;
 }
 
 void volatile calculateL1TLB_Entries(){
@@ -228,9 +272,9 @@ void volatile calculateL1TLB_Entries(){
 
         // Get latency of accessing the next node
         randIndex = rand()%(LL_NODE_PADDING);
-        startTime=rdtscp();
+        startTime=rdtsc();
         randAgitator += curr->next->bytes[randIndex];
-        endTime=rdtscp();
+        endTime=rdtsc();
         randAgitator %= rand()%(UINT32_MAXVAL+1);
 
         // Let's use the 2nd entry as baseline latency
@@ -318,9 +362,9 @@ void volatile setL1DMissLatency(){
 
     // Now we should have evicted the head node from L1 Cache. Measure the latency of this access
     randIndex = rand()%(LL_NODE_PADDING);
-    startTime=rdtscp();
+    startTime=rdtsc();
     randAgitator += head->bytes[randIndex];
-    endTime=rdtscp();
+    endTime=rdtsc();
     randAgitator %= rand()%(UINT32_MAXVAL+1);
 
     L1d_Miss_Latency=endTime-startTime;
@@ -419,4 +463,50 @@ ListNode* createNode(){
         detailedAssert(false, "createNode() - Failed to create new LL node.");
 
     return node;
+}
+
+// Spawn thread on any core but main core
+void spawnThreadOnDiffCore(pthread_t *restrict threadPTR, void* threadFN){
+    cpu_set_t threadCPUSet;
+    pthread_attr_t threadAttr;
+    uint8_t mainCPUID=sched_getcpu();
+    uint8_t threadCPUID=mainCPUID;
+
+    // Get total cores in system (syscall)
+    if(nprocs == 0)
+        nprocs = sysconf(_SC_NPROCESSORS_ONLN);
+
+    // Initialize the thread attributes / cpuset variable
+    pthread_attr_init(&threadAttr);
+    CPU_ZERO(&threadCPUSet);
+
+    // Ensure thread spawns on diff core:
+    while(threadCPUID<((mainCPUID+1)%nprocs) && threadCPUID>((mainCPUID-1)%nprocs))
+        threadCPUID=rand()%nprocs;
+    CPU_SET(threadCPUID, &threadCPUSet);
+    
+    pthread_create(threadPTR, &threadAttr, threadFN, NULL);
+}
+
+// Spawn thread on the specific sibling core (shared L1/L2)
+void spawnThreadOnSiblingCore(pthread_t *restrict threadPTR, void* threadFN){
+    cpu_set_t threadCPUSet;
+    pthread_attr_t threadAttr;
+    uint8_t mainCPUID=sched_getcpu();
+    uint8_t threadCPUID; //, CPUSiblingGap;
+
+    // Get total cores in system (syscall), sibling is +/- half this. 
+    // (cat /sys/devices/system/cpu/cpu0/topology/thread_siblings_list)
+    if(nprocs == 0)
+        nprocs = sysconf(_SC_NPROCESSORS_ONLN);
+
+    // Initialize the thread attributes / cpuset variable
+    pthread_attr_init(&threadAttr);
+    CPU_ZERO(&threadCPUSet);
+
+    threadCPUID = (mainCPUID>=(nprocs/2))? mainCPUID-(nprocs/2): mainCPUID+(nprocs/2);
+    CPU_SET(threadCPUID, &threadCPUSet);
+    
+    printf("DEBUG: Spawning Checker Thread on CPU-%d, (This CPU=%d)\n", threadCPUID, mainCPUID);
+    pthread_create(threadPTR, &threadAttr, threadFN, NULL);
 }

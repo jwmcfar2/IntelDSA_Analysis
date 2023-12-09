@@ -20,9 +20,9 @@ uint64_t volatile single_memcpyC(uint64_t bufSize, bool primeCache){
     else
         flush2(&src, &dst);
     
-    startTime=rdtscp();
+    startTime=rdtsc();
     memcpy(dst, src, bufSize);
-    endTime=rdtscp();
+    endTime=rdtsc();
     //printf("\t> Completed C 'memcpy' function: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[memcpyC] ");
@@ -49,7 +49,7 @@ uint64_t volatile single_movqInsASM(uint64_t bufSize, bool primeCache){
     else
         flush2(&src, &dst);
     
-    startTime=rdtscp();
+    startTime=rdtsc();
     #pragma unroll
     for(int i=0; i<bufSize; i+=8) {
         asm ("movq (%1), %%rax\n\t"
@@ -59,7 +59,7 @@ uint64_t volatile single_movqInsASM(uint64_t bufSize, bool primeCache){
                     : "%rax"
                     );
     }
-    endTime=rdtscp();
+    endTime=rdtsc();
     //printf("\t> Completed looped 64-bit CPU Mov Ins (movq): Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[ASMmovq] ");
@@ -86,13 +86,13 @@ uint64_t volatile single_SSE1movaps(uint64_t bufSize, bool primeCache){
     else
         flush2(&src, &dst);
     
-    startTime=rdtscp();
+    startTime=rdtsc();
     #pragma unroll
     for(int i=0; i<bufSize; i+=16) {
         __m128 chunk = _mm_load_ps((const float*)(src + i));
         _mm_store_ps((float*)(dst + i), chunk);
     }
-    endTime=rdtscp();
+    endTime=rdtsc();
     //printf("\t> Completed SSE1 Mov Instructions: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[SSE1] ");
@@ -119,13 +119,13 @@ uint64_t volatile single_SSE2movdqa(uint64_t bufSize, bool primeCache){
     else
         flush2(&src, &dst);
     
-    startTime=rdtscp();
+    startTime=rdtsc();
     #pragma unroll
     for(int i=0; i<bufSize; i+=16) {  // SSE2 register (128-bit or 16 byte) copy, 256 iterations
         __m128i data = _mm_load_si128((__m128i *)(src + i)); // Load 128-bits aligned data
         _mm_store_si128((__m128i *)(dst + i), data); // Store 128-bits aligned data
     }
-    endTime=rdtscp();
+    endTime=rdtsc();
     //printf("\t> Completed SSE2 Mov Instructions: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[SSE2] ");
@@ -152,7 +152,7 @@ uint64_t volatile single_SSE4movntdq(uint64_t bufSize, bool primeCache){
     else
         flush2(&src, &dst);
     
-    startTime=rdtscp();
+    startTime=rdtsc();
     // Assuming src and dst are 16-byte aligned and len is a multiple of 16
     #pragma unroll
     for(int i=0; i<bufSize; i+=16) {
@@ -165,9 +165,9 @@ uint64_t volatile single_SSE4movntdq(uint64_t bufSize, bool primeCache){
     // A non-temporal store may leave data in the store buffer. The sfence instruction guarantees
     // that every preceding store is globally visible before any load or store instructions that
     // follow the sfence instruction.
-    //printf("\t> Finished *executing* SSE4.1 Mov Ins: Cycles elapsed = %lu cycles.\n", rdtscp()-startTime);
+    //printf("\t> Finished *executing* SSE4.1 Mov Ins: Cycles elapsed = %lu cycles.\n", rdtsc()-startTime);
     _mm_sfence();
-    endTime=rdtscp();
+    endTime=rdtsc();
     //printf("\t> Completed SSE4.1 Mov Ins (TO MEMORY, NOT CACHE): Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[SSE4] ");
@@ -194,13 +194,13 @@ uint64_t volatile single_AVX256(uint64_t bufSize, bool primeCache){
     else
         flush2(&src, &dst);
 
-    startTime=rdtscp();
+    startTime=rdtsc();
     #pragma unroll
     for(int i=0; i<bufSize; i+=32) {
         __m256i data = _mm256_load_si256((__m256i*)(src + i)); // Load 256 bits from source
         _mm256_store_si256((__m256i*)(dst + i), data);         // Store 256 bits into destination
     }
-    endTime=rdtscp();
+    endTime=rdtsc();
     //printf("\t> Completed AVX-256 Mov Instructions: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[AVX256] ");
@@ -227,13 +227,13 @@ uint64_t volatile single_AVX512_32(uint64_t bufSize, bool primeCache){
     else
         flush2(&src, &dst);
 
-    startTime=rdtscp();
+    startTime=rdtsc();
     #pragma unroll
     for(int i=0; i<bufSize; i+=64) {
         __m512i data = _mm512_load_si512((__m512i*)(src + i)); // Load 512 bits from the source
         _mm512_store_si512((__m512i*)(dst + i), data);         // Store 512 bits into the destination
     }
-    endTime=rdtscp();
+    endTime=rdtsc();
     //printf("\t> Completed AVX-512 (32-bit) Mov Ins: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[AVX512_32] ");
@@ -260,13 +260,13 @@ uint64_t volatile single_AVX512_64(uint64_t bufSize, bool primeCache){
     else
         flush2(&src, &dst);
 
-    startTime=rdtscp();
+    startTime=rdtsc();
     #pragma unroll
     for(int i=0; i<bufSize; i+=64) {
         __m512i data = _mm512_load_epi64((__m512i*)(src + i)); // Load 512 bits from the source
         _mm512_store_epi64((__m512i*)(dst + i), data);         // Store 512 bits into the destination
     }
-    endTime=rdtscp();
+    endTime=rdtsc();
     //printf("\t> Completed AVX-512 (64-bit) Mov Ins: Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[AVX512_64] ");
@@ -369,6 +369,7 @@ uint64_t volatile single_AMX(uint64_t bufSize, bool primeCache){
         }
         flush(srcAMX);
         flush(dstAMX);
+        cpuMFence();
     }
 
     // ~~~~ LOAD/ST TILES ('AMX Mem Mov') ~~~~~ //
@@ -376,7 +377,7 @@ uint64_t volatile single_AMX(uint64_t bufSize, bool primeCache){
     // _tile_loadd (N, ... <-- N *cannot* be a variable.
     //
     // Load values into a tile
-    startTime=rdtscp();
+    startTime=rdtsc();
     _tile_loadd(0, srcAMX[0], AMX_STRIDE);
     if(tileCount >=2)
         _tile_loadd(1, srcAMX[1], AMX_STRIDE);
@@ -393,7 +394,7 @@ uint64_t volatile single_AMX(uint64_t bufSize, bool primeCache){
         _tile_stored(2, dstAMX[2], AMX_STRIDE);
     if(tileCount >=4)
         _tile_stored(3, dstAMX[3], AMX_STRIDE);
-    endTime=rdtscp();
+    endTime=rdtsc();
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -432,7 +433,7 @@ uint64_t volatile single_clflush(uint64_t bufSize, bool primeCache){
     for (int i=0; i<bufSize; i++)
         dst[i] = rand()%(255);
 
-    startTime = rdtscp();
+    startTime = rdtsc();
     #pragma unroll
     for (int i=0; i<bufSize; i+=64) {
         asm volatile ("clflush 0(%0)\n"
@@ -440,7 +441,7 @@ uint64_t volatile single_clflush(uint64_t bufSize, bool primeCache){
             : "c" (&dst[i])
             : "rax");
     }
-    endTime = rdtscp();
+    endTime = rdtsc();
 
     free(dst);
     return (endTime-startTime);
@@ -455,7 +456,7 @@ uint64_t volatile single_clflushopt(uint64_t bufSize, bool primeCache){
     for (int i=0; i<bufSize; i++)
         dst[i] = rand()%(255);
 
-    startTime = rdtscp();
+    startTime = rdtsc();
     #pragma unroll
     for (int i=0; i<bufSize; i+=64) {
         // Use inline assembly to flush the cache line containing dst[i].
@@ -466,7 +467,7 @@ uint64_t volatile single_clflushopt(uint64_t bufSize, bool primeCache){
             : "memory"
         );
     }
-    endTime = rdtscp();
+    endTime = rdtsc();
     
     free(dst);
     return (endTime-startTime);

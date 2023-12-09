@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
 
     // Try to Clear Caches and TLB
     floodHelperFn();
+    profileRDTSC();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //~~~~~~~~~~~~ BEGIN TESTS ~~~~~~~~~~~~//
@@ -55,7 +56,9 @@ int main(int argc, char *argv[]) {
                         resArr[AVX5_64Indx] = single_AVX512_64(bufferSize, mode);
                         break;
                     case 8: // AMX Ld/St Tile
-                        resArr[AMXIndx] = single_AMX(bufferSize, mode);
+                        printf("AMX BROKEN - FIX ME!\n");
+                        //resArr[AMXIndx] = single_AMX(bufferSize, mode);
+                        resArr[AMXIndx] = 11111;
                         break;
 
                     case 9: // DSA Mem cp
@@ -63,7 +66,7 @@ int main(int argc, char *argv[]) {
                         while(descriptorRetry)
                         {
                             single_DSADescriptorInit();
-                            compilerMemFence();
+                            compilerMFence();
                             descriptorRetry = enqcmd(wq_portal, &descr);
                         }
                         
@@ -89,6 +92,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Output Results
+    adjustTimes();
     parseResults(argv[2]);
 
     return 0;
@@ -103,7 +107,7 @@ int main(int argc, char *argv[]) {
 }
 
 // Make new DSA Descriptor(s) (effectively 'job packets' to tell DSA what to do)
-void ANTI_OPT single_DSADescriptorInit(){
+void single_DSADescriptorInit(){
     int fd;
 
     // Try and pull global perf counters into cache:
@@ -148,7 +152,7 @@ void ANTI_OPT single_DSADescriptorInit(){
 }
 
 // Verify transfer, free the memory, and store perf counters
-void ANTI_OPT finalizeDSA(){
+void finalizeDSA(){
     valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
 
     munmap(wq_portal, PORTAL_SIZE);
@@ -160,18 +164,24 @@ void ANTI_OPT finalizeDSA(){
 }
 
 // Actual ASM functionality to send descriptor 
-uint8_t ANTI_OPT enqcmd(void *_dest, const void *_src){
+uint8_t enqcmd(void *_dest, const void *_src){
     uint8_t retry;
-    startTimeEnQ = rdtscp();
+    startTimeEnQ = rdtsc();
     asm volatile(".byte 0xf2, 0x0f, 0x38, 0xf8, 0x02\t\n"
                  "setz %0\t\n"
                  : "=r"(retry) : "a" (_dest), "d" (_src));
-    endTimeEnQ = rdtscp();
+    endTimeEnQ = rdtsc();
     while(compRec.status!=1){}
-    endTimeDSA = rdtscp();
+    endTimeDSA = rdtsc();
     startTimeDSA = endTimeEnQ;
 
-    return ((endTimeEnQ-startTimeEnQ)>10000 || endTimeDSA-startTimeDSA>7500);
+    return ((endTimeEnQ-startTimeEnQ)>10000); // || endTimeDSA-startTimeDSA>7500);
+}
+
+// Adjust measured time by avg observed overhead from RTDSC()
+void adjustTimes(){
+    for(int i=0; i<NUM_TESTS; i++)
+        resArr[i] -= RTDSC_latency;
 }
 
 void parseResults(char* fileName){

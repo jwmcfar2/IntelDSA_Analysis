@@ -13,6 +13,7 @@ bufferSizes=(64 128 256 512 1024 2048 4096)
 bufferSizeSuffix=("B" "KB")
 bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
 modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
+testTypes=("memmv" "flush") # "cmp")
 outFileArr=("" "" "" "" "" "" "")
 declare -A runCountsArr # Array to allow us to randomly choose a buffer size.
 currFileIndex=0
@@ -89,6 +90,9 @@ while [ ${#bufferSizes[@]} -gt 0 ]; do
     # Run ./myProgram a single time if it hasn't reached 1000 runs yet
     if [ ${runCountsArr[selectedBufferSize]} -lt $runcount ]; then
         
+        # Rand 1-10
+        #randCPU = echo $((1 + $RANDOM % 10))
+
         # Run the test
         $runFile $selectedBufferSize $outputResFile $runMode &
         wait $!

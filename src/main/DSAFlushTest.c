@@ -1,6 +1,7 @@
 #include "DSAFlushTest.h"
 
 int main(int argc, char *argv[]) {
+    pthread_t checkerThread;
     uint8_t switchIndex;
     srand(time(NULL));
 
@@ -11,13 +12,21 @@ int main(int argc, char *argv[]) {
     bufferSize = (unsigned int)strtoul(argv[1], NULL, 10);
     detailedAssert((bufferSize%64==0),"Main() - Please specify bufferSize that is a factor of 64, and <= 4096."); //  && bufferSize<=4096
 
-    printf("SELF NOTE - NEED TO FIGURE OUT PTHREADS FOR THIS. TIMING ACTUAL FINISHED FLUSH OP\n");
-    printf("IS PRETTY MUCH IMPOSSIBLE WITHOUT CONSTANTLY CHECKING FOR A DIFFERENCE IN CACHE LATENCY NON-SERIALIZED\n");
-    printf("(WHICH WOULD BRING IT BACK INTO CACHE) - MAYBE DO A DANGEROUS IMPLEMENTATION WITHOUT LOCKS/SLEEP()?\n");
+    //printf("SELF NOTE 2 - MAKE PTHREAD LOOK FOR CACHE FR LATENCY!\n");
 
-    // Try to Clear Caches and TLB
-    profileCacheLatency();
-    floodHelperFn();
+    // Profile cache latency and try to clear caches and TLB
+    //profileCacheLatency();
+    profileRDTSC();
+    //floodHelperFn();
+
+    // Now that we have cache latency profile for hit/miss, spawn checker thread...
+    compRec.status=0;
+    compilerMFence();
+    spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
+    while(!threadStarted){
+        spawnNOPs(1);
+    }
+    cpuMFence();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //~~~~~~~~~~~~ BEGIN TESTS ~~~~~~~~~~~~//
@@ -37,25 +46,33 @@ int main(int argc, char *argv[]) {
                     /*******************/
                     // Module/Baseline Fn Tests
                     case 0: // clflushopt
-                        printf("DEBUG: Sw0\n");
                         resArr[clflushoptIndx] = single_clflushopt(bufferSize, mode);
                         break;
                     case 1: // clflush
-                        printf("DEBUG: Sw1\n");
                         resArr[clflushIndx] = single_clflush(bufferSize, mode);
                         break;
 
                     case 2: // DSA flush op
-                        printf("DEBUG: Sw2\n");
                         descriptorRetry=1;
                         while(descriptorRetry)
                         {
-                            printf("\t> DEBUG: Sw2a\n");
                             single_DSADescriptorInit();
-                            compilerMemFence();
+                            compilerMFence();
                             descriptorRetry = enqcmd(wq_portal, &descr);
+                            
+                            // enqCMD failed - respawn checker thread...
+                            if(descriptorRetry)
+                            {
+                                compRec.status=0;
+                                threadStarted=0;
+                                pthread_join(checkerThread, NULL);
+                                spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
+                                while(!threadStarted){
+                                    spawnNOPs(1);
+                                }
+                                cpuMFence();
+                            }
                         }
-                        printf("< DEBUG: Sw2b\n");
                         
                         finalizeDSA();
                         break;
@@ -79,6 +96,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Output Results
+    adjustTimes();
     parseResults(argv[2]);
 
     return 0;
@@ -93,7 +111,7 @@ int main(int argc, char *argv[]) {
 }
 
 // Make new DSA Descriptor(s) (effectively 'job packets' to tell DSA what to do)
-void ANTI_OPT single_DSADescriptorInit(){
+void single_DSADescriptorInit(){
     int fd;
 
     // Try and pull global perf counters into cache:
@@ -138,31 +156,45 @@ void ANTI_OPT single_DSADescriptorInit(){
 }
 
 // Verify transfer, free the memory, and store perf counters
-void ANTI_OPT finalizeDSA(){
+void finalizeDSA(){
     //valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
+    uint64_t serialLatency, pthreadLatency;
 
     munmap(wq_portal, PORTAL_SIZE);
     //free(srcDSA);
     free(dstDSA);
 
+    serialLatency = (endTimeDSA-startTimeDSA);
+    pthreadLatency = (endTimePThread-startTimeDSA);
+    //printf("DEBUG: pthread lat = %lu cycs, serial lat= %lu cycs\n", pthreadLatency, serialLatency);
+
     resArr[DSAenqIndx]  = endTimeEnQ-startTimeEnQ;
-    resArr[DSAFlushIndx] = endTimeDSA-startTimeDSA;
+    resArr[DSAFlushIndx] = (pthreadLatency < serialLatency)? pthreadLatency : serialLatency;
 }
 
 // Actual ASM functionality to send descriptor 
-uint8_t ANTI_OPT enqcmd(void *_dest, const void *_src){
+uint8_t enqcmd(void *_dest, const void *_src){
     uint8_t retry;
-    startTimeEnQ = rdtscp();
+    startTimeEnQ = rdtsc();
     asm volatile(".byte 0xf2, 0x0f, 0x38, 0xf8, 0x02\t\n"
                  "setz %0\t\n"
                  : "=r"(retry) : "a" (_dest), "d" (_src));
-    endTimeEnQ = rdtscp();
+    endTimeEnQ = rdtsc();
     int debug=0;
     while(compRec.status!=1){}
-    endTimeDSA = rdtscp();
+    endTimeDSA = rdtsc();
     startTimeDSA = endTimeEnQ;
 
-    return ((endTimeEnQ-startTimeEnQ)>10000 || endTimeDSA-startTimeDSA>7500);
+    //printf("DEBUG: endTimeEnQ Timestamp =         %lu\n", endTimeEnQ);
+    //printf("DEBUG: endTimeEnQ elapsed time =         %lu\n", endTimeDSA-startTimeDSA);
+
+    return ((endTimeEnQ-startTimeEnQ)>15000 || (endTimeDSA-startTimeDSA)>15000);
+}
+
+// Adjust measured time by avg observed overhead from RTDSC()
+void adjustTimes(){
+    for(int i=0; i<NUM_TESTS; i++)
+        resArr[i] -= RTDSC_latency;
 }
 
 void parseResults(char* fileName){
@@ -201,4 +233,18 @@ void parseResults(char* fileName){
     system(cmdStr);
     snprintf(cmdStr, sizeof(cmdStr), "mv results/.dsaTemp %s", fileName);
     system(cmdStr);
+}
+
+void* checkerThreadFn(void* args)
+{
+    endTimePThread=0;
+    unsigned cycles_high, cycles_low;
+
+    threadStarted=true;
+    cpuMFence();
+
+    while(compRec.status != 1){ }
+
+    endTimePThread=rdtsc();
+    //printf("Checker thread completed! Timestamp = %lu || status=0x%x\n", endTimePThread, compRec.status);//failCount);
 }

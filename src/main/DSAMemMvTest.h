@@ -10,8 +10,10 @@
 
 // Pull in externs from utils.h
 uint64_t flushReload_latency;
+uint64_t RTDSC_latency;
 uint64_t L1d_Hit_Latency;
 uint64_t LLC_Miss_Latency;
+uint64_t nprocs=0;
 
 // Perf Counter Indexes, indexed 0-9 (10 entries -> NUM_TESTS=10)
 typedef enum {
@@ -59,7 +61,8 @@ uint64_t  startTimeDSA, endTimeDSA;
 uint8_t   descriptorRetry;
 
 // Function List
-void     ANTI_OPT   single_DSADescriptorInit();
-void     ANTI_OPT   finalizeDSA();
-uint8_t  ANTI_OPT   enqcmd(void *dst, const void *src);
-void                parseResults(char* fileName);
+void        single_DSADescriptorInit();
+void        finalizeDSA();
+uint8_t     enqcmd(void *dst, const void *src);
+void        adjustTimes();
+void        parseResults(char* fileName);
