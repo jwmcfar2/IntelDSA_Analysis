@@ -1,6 +1,7 @@
 #include "DSAMemMvTest.h"
 
 int main(int argc, char *argv[]) {
+    pthread_t checkerThread;
     uint8_t switchIndex;
     srand(time(NULL));
 
@@ -10,10 +11,18 @@ int main(int argc, char *argv[]) {
     mode = (modeEnum)atoi(argv[3]);
     bufferSize = (unsigned int)strtoul(argv[1], NULL, 10);
     detailedAssert((bufferSize%64==0 && bufferSize<=4096),"Main() - Please specify bufferSize that is a factor of 64, and <= 4096.");
-
-    // Try to Clear Caches and TLB
-    floodHelperFn();
+ 
+    // Profile RDTSC latency overhead
     profileRDTSC();
+
+    // Spawn DSA checker thread...
+    compRec.status=0;
+    compilerMFence();
+    spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
+    while(!threadStarted){
+        spawnNOPs(1);
+    }
+    cpuMFence();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //~~~~~~~~~~~~ BEGIN TESTS ~~~~~~~~~~~~//
@@ -56,9 +65,7 @@ int main(int argc, char *argv[]) {
                         resArr[AVX5_64Indx] = single_AVX512_64(bufferSize, mode);
                         break;
                     case 8: // AMX Ld/St Tile
-                        printf("AMX BROKEN - FIX ME!\n");
-                        //resArr[AMXIndx] = single_AMX(bufferSize, mode);
-                        resArr[AMXIndx] = 11111;
+                        resArr[AMXIndx] = single_AMX(bufferSize, mode);
                         break;
 
                     case 9: // DSA Mem cp
@@ -68,6 +75,19 @@ int main(int argc, char *argv[]) {
                             single_DSADescriptorInit();
                             compilerMFence();
                             descriptorRetry = enqcmd(wq_portal, &descr);
+                            
+                            // enqCMD failed - respawn checker thread...
+                            if(descriptorRetry)
+                            {
+                                compRec.status=0;
+                                threadStarted=0;
+                                pthread_join(checkerThread, NULL);
+                                spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
+                                while(!threadStarted){
+                                    spawnNOPs(1);
+                                }
+                                cpuMFence();
+                            }
                         }
                         
                         finalizeDSA();
@@ -110,12 +130,6 @@ int main(int argc, char *argv[]) {
 void single_DSADescriptorInit(){
     int fd;
 
-    // Try and pull global perf counters into cache:
-    startTimeDSA = rand()%(1024);
-    endTimeDSA   = rand()%(255);
-    startTimeEnQ = rand()%(1024);
-    endTimeEnQ   = rand()%(255);
-
     // WQ Path Check
     fd = open(wqPath, O_RDWR);
     detailedAssert((fd >= 0), "DSA Descriptor Init() failed opening WQ portal file from path.");
@@ -154,13 +168,18 @@ void single_DSADescriptorInit(){
 // Verify transfer, free the memory, and store perf counters
 void finalizeDSA(){
     valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
+    uint64_t serialLatency, pthreadLatency;
 
     munmap(wq_portal, PORTAL_SIZE);
     free(srcDSA);
     free(dstDSA);
 
+    serialLatency = (endTimeDSA-startTimeDSA);
+    pthreadLatency = (endTimePThread-startTimeDSA);
+    //printf("DEBUG: pthread lat = %lu cycs, serial lat= %lu cycs\n", pthreadLatency, serialLatency);
+
     resArr[DSAenqIndx]  = endTimeEnQ-startTimeEnQ;
-    resArr[DSAmovRIndx] = endTimeDSA-startTimeDSA;
+    resArr[DSAmovIndx] = (pthreadLatency < serialLatency)? pthreadLatency : serialLatency;
 }
 
 // Actual ASM functionality to send descriptor 
@@ -175,7 +194,10 @@ uint8_t enqcmd(void *_dest, const void *_src){
     endTimeDSA = rdtsc();
     startTimeDSA = endTimeEnQ;
 
-    return ((endTimeEnQ-startTimeEnQ)>10000); // || endTimeDSA-startTimeDSA>7500);
+    //printf("DEBUG: endTimeEnQ Timestamp =         %lu\n", endTimeEnQ);
+    //printf("DEBUG: endTimeEnQ elapsed time =         %lu\n", endTimeDSA-startTimeDSA);
+
+    return ((endTimeEnQ-startTimeEnQ)>15000 || (endTimeDSA-startTimeDSA)>15000);
 }
 
 // Adjust measured time by avg observed overhead from RTDSC()
@@ -220,4 +242,18 @@ void parseResults(char* fileName){
     system(cmdStr);
     snprintf(cmdStr, sizeof(cmdStr), "mv results/.dsaTemp %s", fileName);
     system(cmdStr);
+}
+
+void* checkerThreadFn(void* args)
+{
+    endTimePThread=0;
+    unsigned cycles_high, cycles_low;
+
+    threadStarted=true;
+    cpuMFence();
+
+    while(compRec.status != 1){ }
+
+    endTimePThread=rdtsc();
+    //printf("Checker thread completed! Timestamp = %lu || status=0x%x\n", endTimePThread, compRec.status);//failCount);
 }

@@ -94,6 +94,7 @@ void volatile flushHelperFn(){
     flushAllDataCaches();
 }
 
+// Unused?
 void volatile floodHelperFn(){
     floodAllDataCaches();
     //compilerMFence();
@@ -507,6 +508,6 @@ void spawnThreadOnSiblingCore(pthread_t *restrict threadPTR, void* threadFN){
     threadCPUID = (mainCPUID>=(nprocs/2))? mainCPUID-(nprocs/2): mainCPUID+(nprocs/2);
     CPU_SET(threadCPUID, &threadCPUSet);
     
-    printf("DEBUG: Spawning Checker Thread on CPU-%d, (This CPU=%d)\n", threadCPUID, mainCPUID);
+    //printf("DEBUG: Spawning Checker Thread on CPU-%d, (This CPU=%d)\n", threadCPUID, mainCPUID);
     pthread_create(threadPTR, &threadAttr, threadFN, NULL);
 }

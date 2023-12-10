@@ -1,16 +1,16 @@
 #!/bin/bash
 #
-# NOTE - DO NOT RUN THIS SCRIPT DIRECTLY!!! TIMINGS WILL BE INACCURATE USE THE 
+# NOTE - DO NOT RUN THIS SCRIPT DIRECTLY!!! TIMINGS WILL BE INACCURATE, USE THE 
 # OTHER SCRIPT (initRun.sh) INSTEAD! (something about needing to use separate
-# processes that './runFile &' didnt solve)
+# processes that './testBinary &' didnt solve)
 #
 # Quick Syntax = ./runScript [runCount] [runMode] [timeStamp]
 
-#runFile="bin/DSATest"
+#runFile[testTypeIndx]="bin/DSATest"
 cpuAffin="7"
 
-testTypes=("memmv" "flush") # "cmp")
-testFiles=("bin/DSAMemMvTest" "bin/DSAFlushTest")
+testTypes=("memmv" "flush" "cmp")
+testFiles=("bin/DSAMemMvTest" "bin/DSAFlushTest" "bin/DSAFlushTest")
 
 runBufferSizes=(64 128 256 512 1024 2048 4096)
 bufferSizeSuffix=("B" "KB")
@@ -32,9 +32,9 @@ if [[ "$4" == "-q" ]]; then
     quietFlag=1
 fi
 
-# Check if 'bin/DSATest' exists and is a file
-if [[ ! -f "$runFile" ]]; then
-    echo -e "\nFATAL: '$runFile' Missing - Compile source code using \"myScripts/buildScript.sh\". Exiting...\n"
+# Check if 'bin/DSA...' exists and is a file
+if [[ ! -f "${testFiles[0]}" || ! -f "${testFiles[1]}" ]]; then
+    echo -e "\nFATAL: Missing Binary - Compile source code using \"myScripts/buildScript.sh\". Exiting...\n"
     exit
 fi
 
@@ -57,8 +57,9 @@ for bufferSize in "${bufferSizes[@]}"; do
     runCountsArr[$bufferSize]=0
 done
 
-for testTypeIndx in "${testTypes[@]}"; do
-    bufferSizes=$runBufferSizes
+for testTypeIndx in "${!testTypes[@]}"; do
+    bufferSizes=("${runBufferSizes[@]}")
+
     # Randomly choose one of the bufferSizes to perform the test, to further reduce optimization
     while [ ${#bufferSizes[@]} -gt 0 ]; do
         index=$((RANDOM % ${#bufferSizes[@]}))
@@ -74,7 +75,7 @@ for testTypeIndx in "${testTypes[@]}"; do
         sizeSubstr+="$suffix"
         
         # Add file name to Arr if it doesn't exist
-        outputResFile="results/${testTypes[testTypes]}/${bufferType[runMode]}_mov/"
+        outputResFile="results/${testTypes[testTypeIndx]}/${bufferType[runMode]}/"
         outputResFile+="${sizeSubstr}_${modeType[runMode]}_${fileTimeStamp}.out"
         for ((i=0; i<=currFileIndex; i++)); do
             # String exists in Arr already
@@ -95,7 +96,7 @@ for testTypeIndx in "${testTypes[@]}"; do
         # Run ./myProgram a single time if it hasn't reached 1000 runs yet
         if [ ${runCountsArr[selectedBufferSize]} -lt $runcount ]; then
             # Run the test
-            $runFile $selectedBufferSize $outputResFile $runMode &
+            ${testFiles[testTypeIndx]} $selectedBufferSize $outputResFile $runMode &
             wait $!
             
             # Increment the run count for chosen bufferSize
@@ -124,10 +125,6 @@ for testTypeIndx in "${testTypes[@]}"; do
         fi
     done
 done
-
-if [[ $quietFlag -eq 0 ]]; then
-    echo -e "\n\t## Reminder: You can pass end of script to quiet script print-statements\n"
-fi
 
 # MOVED AVERAGE TO OTHER SCRIPT
 exit

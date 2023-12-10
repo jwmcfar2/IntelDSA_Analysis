@@ -1,4 +1,4 @@
-#include "DSAFlushTest.h"
+#include "DSACmpTest.h"
 
 int main(int argc, char *argv[]) {
     pthread_t checkerThread;
@@ -40,14 +40,23 @@ int main(int argc, char *argv[]) {
                 {
                     /*******************/
                     // Module/Baseline Fn Tests
-                    case 0: // clflushopt
-                        resArr[clflushoptIndx] = single_clflushopt(bufferSize, mode);
+                    case 0: // SSE2cmp
+                        resArr[SSE2cmp] = single_SSE2cmp(bufferSize, mode);
                         break;
-                    case 1: // clflush
-                        resArr[clflushIndx] = single_clflush(bufferSize, mode);
+                    case 1: // SSE4cmp
+                        resArr[SSE4cmp] = single_SSE4cmp(bufferSize, mode);
+                        break;
+                    case 2: // C_memcmp
+                        resArr[C_memcmp] = single_Cmemcmp(bufferSize, mode);
+                        break;
+                    case 3: // AVX256cmp
+                        resArr[AVX256cmp] = single_AVX256cmp(bufferSize, mode);
+                        break;
+                    case 4: // AVX512cmp
+                        resArr[AVX512cmp] = single_AVX512cmp(bufferSize, mode);
                         break;
 
-                    case 2: // DSA flush op
+                    case 5: // DSA cmp op
                         descriptorRetry=1;
                         while(descriptorRetry)
                         {
@@ -114,7 +123,7 @@ void single_DSADescriptorInit(){
     detailedAssert((fd >= 0), "DSA Descriptor Init() failed opening WQ portal file from path.");
 
     // Chose DSA Instruction
-    descr.opcode = DSA_OPCODE_CFLUSH;
+    descr.opcode = DSA_OPCODE_COMPARE;
 
     // Config Completion Record info
     compRec.status = 0;
@@ -128,14 +137,17 @@ void single_DSADescriptorInit(){
     //descr.flags |= IDXD_OP_FLAG_CC;
 
     // Init srcDSA
-    //srcDSA = aligned_alloc(64, bufferSize);
+    srcDSA = aligned_alloc(64, bufferSize);
     dstDSA = aligned_alloc(64, bufferSize);
     for(int i=0; i<bufferSize; i++)
-        dstDSA[i] = rand()%(255);
+    {
+        srcDSA[i] = rand()%(255);
+        dstDSA[i] = srcDSA[i];
+    }
 
     // Set packet info
     descr.xfer_size = bufferSize;
-    //descr.src_addr  = (uintptr_t)srcDSA;
+    descr.src_addr  = (uintptr_t)srcDSA;
     descr.dst_addr  = (uintptr_t)dstDSA;
 
     // Map this Descriptor (<- user space) to DSA WQ portal (<- specific address space (privileged?))
@@ -146,19 +158,22 @@ void single_DSADescriptorInit(){
 
 // Verify transfer, free the memory, and store perf counters
 void finalizeDSA(){
-    //valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
     uint64_t serialLatency, pthreadLatency;
 
     munmap(wq_portal, PORTAL_SIZE);
-    //free(srcDSA);
+    free(srcDSA);
     free(dstDSA);
+
+    // Check and make sure the result says buffers were equal
+    // "a value of 0 indicates that the two memory regions match" (0 if not)
+    detailedAssert((compRec.result==0), "finalizeDSA() - DSA Comp Failed.");
 
     serialLatency = (endTimeDSA-startTimeDSA);
     pthreadLatency = (endTimePThread-startTimeDSA);
     //printf("DEBUG: pthread lat = %lu cycs, serial lat= %lu cycs\n", pthreadLatency, serialLatency);
 
     resArr[DSAenqIndx]  = endTimeEnQ-startTimeEnQ;
-    resArr[DSAFlushIndx] = (pthreadLatency < serialLatency)? pthreadLatency : serialLatency;
+    resArr[DSAcmpIndx] = (pthreadLatency < serialLatency)? pthreadLatency : serialLatency;
 }
 
 // Actual ASM functionality to send descriptor 

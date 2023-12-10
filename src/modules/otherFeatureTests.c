@@ -4,34 +4,6 @@
 // ~~~~~~~~ Mem Mv Fns ~~~~~~~~~~ //
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-// ~~~~~~~~ C Memcpy INS ~~~~~~~~ //
-uint64_t volatile single_memcpyC(uint64_t bufSize, bool primeCache){
-    //printf("\n || Test Latency of C 'memcpy' function\n");
-    uint64_t startTime, endTime;
-
-    src = malloc(bufSize);
-    dst = malloc(bufSize);
-    for(int i=0; i<bufSize; i++)
-        src[i] = rand()%(255);
-
-    // Either prime the cache with these, or flush them from cache
-    if(primeCache)
-        prime2(src, dst, bufSize);
-    else
-        flush2(&src, &dst);
-    
-    startTime=rdtsc();
-    memcpy(dst, src, bufSize);
-    endTime=rdtsc();
-    //printf("\t> Completed C 'memcpy' function: Cycles elapsed = %lu cycles.\n", endTime-startTime);
-    
-    valueCheck(src, dst, bufSize, "[memcpyC] ");
-    free(src);
-    free(dst);
-
-    return (endTime-startTime);
-}
-
 // ~~~~~~~~ ASM Movq INS ~~~~~~~~ //
 uint64_t volatile single_movqInsASM(uint64_t bufSize, bool primeCache){
     //printf("\n || Test Latency of ASM mem mov\n");
@@ -63,6 +35,34 @@ uint64_t volatile single_movqInsASM(uint64_t bufSize, bool primeCache){
     //printf("\t> Completed looped 64-bit CPU Mov Ins (movq): Cycles elapsed = %lu cycles.\n", endTime-startTime);
     
     valueCheck(src, dst, bufSize, "[ASMmovq] ");
+    free(src);
+    free(dst);
+
+    return (endTime-startTime);
+}
+
+// ~~~~~~~~ C Memcpy INS ~~~~~~~~ //
+uint64_t volatile single_memcpyC(uint64_t bufSize, bool primeCache){
+    //printf("\n || Test Latency of C 'memcpy' function\n");
+    uint64_t startTime, endTime;
+
+    src = malloc(bufSize);
+    dst = malloc(bufSize);
+    for(int i=0; i<bufSize; i++)
+        src[i] = rand()%(255);
+
+    // Either prime the cache with these, or flush them from cache
+    if(primeCache)
+        prime2(src, dst, bufSize);
+    else
+        flush2(&src, &dst);
+    
+    startTime=rdtsc();
+    memcpy(dst, src, bufSize);
+    endTime=rdtsc();
+    //printf("\t> Completed C 'memcpy' function: Cycles elapsed = %lu cycles.\n", endTime-startTime);
+    
+    valueCheck(src, dst, bufSize, "[memcpyC] ");
     free(src);
     free(dst);
 
@@ -471,4 +471,232 @@ uint64_t volatile single_clflushopt(uint64_t bufSize, bool primeCache){
     
     free(dst);
     return (endTime-startTime);
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~ Mem Cmp Fns ~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+
+uint64_t volatile single_Cmemcmp(uint64_t bufSize, bool primeCache){
+    uint64_t startTime, endTime;
+    uint8_t *src, *dst;
+
+    src = malloc(bufSize);
+    dst = malloc(bufSize);
+
+    // Initialize the source and destination arrays
+    for (size_t i = 0; i < bufSize; ++i) 
+    {
+        src[i] = rand() % 255;
+        dst[i] = src[i];
+    }
+
+    // Flush the buffers
+    if(!primeCache)
+    {
+        for (size_t i = 0; i<bufSize; i++) 
+        {
+            flush(&src[i]);
+            flush(&dst[i]);
+        }
+            flush(src);
+            flush(dst);
+    }
+
+    startTime = rdtsc();
+    if(memcmp(src, dst, bufSize) == 0)
+        {}
+    else
+        detailedAssert(false, "single_Cmemcmp() - Values mismatch! Compare failed.");
+    endTime = rdtsc();
+    
+    free(src);
+    free(dst);
+
+    return (endTime - startTime);
+}
+
+uint64_t volatile single_SSE2cmp(uint64_t bufSize, bool primeCache){
+    uint64_t startTime, endTime;
+    uint16_t mSz = sizeof(__m128i);
+    __m128i *srcSSE2Arr, *dstSSE2Arr;
+    
+    srcSSE2Arr = malloc(sizeof(__m128i) * (bufSize/mSz));
+    dstSSE2Arr = malloc(sizeof(__m128i) * (bufSize/mSz));
+    src = malloc(bufSize);
+    dst = malloc(bufSize);
+    for(int i=0; i<bufSize; i++)
+    {
+        src[i] = rand()%(255);
+        dst[i] = src[i];
+    }
+
+    // Convert the buffers:
+    for (size_t i = 0; i<bufSize/mSz; i++) 
+    {
+        srcSSE2Arr[i] = _mm_loadu_si128((__m128i*)(src + (i*mSz)));
+        dstSSE2Arr[i] = _mm_loadu_si128((__m128i*)(dst + (i*mSz)));
+    }
+
+    // Flush the buffers
+    if(!primeCache)
+    {
+        for (size_t i = 0; i<bufSize/mSz; i++) 
+        {
+            flush(&srcSSE2Arr[i]);
+            flush(&dstSSE2Arr[i]);
+        }
+        flush(srcSSE2Arr);
+        flush(dstSSE2Arr);
+    }
+
+    startTime = rdtsc();
+    for (size_t i=0; i<bufSize/mSz; i++)
+    {   
+        if (!_mm_test_all_ones(_mm_cmpeq_epi8(srcSSE2Arr[i],   dstSSE2Arr[i])))
+        {
+            detailedAssert(false, "single_SSE2cmp() - Values mismatch! Compare failed.");
+            break;
+        }
+    }
+    endTime = rdtsc();
+
+    free(src);
+    free(dst);
+    return (endTime-startTime);
+}
+
+uint64_t volatile single_SSE4cmp(uint64_t bufSize, bool primeCache){
+    int mask;
+    uint16_t mSz = sizeof(__m128i);
+    uint64_t startTime, endTime;
+    __m128i cmp, *srcSSE4Arr, *dstSSE4Arr;
+    
+    srcSSE4Arr = malloc(mSz * (bufSize/mSz));
+    dstSSE4Arr = malloc(mSz * (bufSize/mSz));
+
+    src = malloc(bufSize);
+    dst = malloc(bufSize);
+    for(int i=0; i<bufSize; i++)
+    {
+        src[i] = rand()%(255);
+        dst[i] = src[i];
+    }
+
+    // Convert the buffers:
+    for (size_t i = 0; i<bufSize/16; i++) 
+    {
+        srcSSE4Arr[i] = _mm_loadu_si128((__m128i*)(src + (i*mSz)));
+        dstSSE4Arr[i] = _mm_loadu_si128((__m128i*)(dst + (i*mSz)));
+    }
+
+    // Flush the buffers
+    if(!primeCache)
+    {
+        for (size_t i = 0; i<bufSize/16; i++) 
+        {
+            flush(&srcSSE4Arr[i]);
+            flush(&dstSSE4Arr[i]);
+        }
+            flush(srcSSE4Arr);
+            flush(dstSSE4Arr);
+    }
+
+    startTime = rdtsc();
+    for (size_t i=0; i<bufSize/mSz; i++)
+    {
+        cmp = _mm_cmpeq_epi64(srcSSE4Arr[i], dstSSE4Arr[i]);
+        
+        // Create mask to test if all bytes are 0xFFFF
+        mask = _mm_movemask_epi8(cmp);
+
+        if(mask != 0xFFFF)
+        {
+            detailedAssert(false, "single_SSE4cmp() - Values mismatch! Compare failed.");
+            break;
+        }
+    }
+    endTime = rdtsc();
+
+    free(src);
+    free(dst);
+    return (endTime-startTime);
+}
+
+uint64_t volatile single_AVX256cmp(uint64_t bufSize, bool primeCache){
+    int mask;
+    uint16_t mSz = sizeof(__m256i);
+    uint64_t startTime, endTime, randArr[4];
+    __m256i srcAVXArr, dstAVXArr;
+
+    // Init values and assign them to the AVX vectors
+    for(int i=0; i<4; i++)
+        randArr[i] = rand() % UINT64_MAXVAL;
+    srcAVXArr = _mm256_set_epi64x(randArr[3],
+        randArr[2],randArr[1],randArr[0]);
+    dstAVXArr = _mm256_set_epi64x(randArr[3],
+        randArr[2],randArr[1],randArr[0]);
+
+    // Flush the buffers
+    if(!primeCache)
+    {
+        flush(&srcAVXArr);
+        flush(&dstAVXArr);
+    }
+
+    // Perform the comparison and measure the time taken
+    startTime = rdtsc();
+    for (size_t i=0; i<(bufSize/mSz); i++)
+    {
+        if (!_mm256_testc_si256(_mm256_cmpeq_epi8(srcAVXArr, dstAVXArr), _mm256_set1_epi32(-1)))
+        {
+            detailedAssert(false, "single_AVX256cmp() - Values mismatch! Compare failed.");
+            break;
+        }
+    }
+    endTime = rdtsc();
+
+    return (endTime - startTime);
+}
+
+uint64_t volatile single_AVX512cmp(uint64_t bufSize, bool primeCache){
+    uint64_t startTime, endTime;
+    uint8_t *src, *dst, randArr[8];
+    __m512i srcAVXArr, dstAVXArr;
+    __mmask64 mask;
+    size_t numElements = bufSize / sizeof(__m512i); // Number of 512-bit integers in the array
+
+    // Init values and assign them to the AVX vectors
+    for(int i=0; i<8; i++)
+        randArr[i] = rand() % UINT64_MAXVAL;
+    srcAVXArr = _mm512_set_epi64(
+        randArr[7], randArr[6], randArr[5], randArr[4],
+        randArr[3], randArr[2], randArr[1], randArr[0]
+    );
+    dstAVXArr = _mm512_set_epi64(
+        randArr[7], randArr[6], randArr[5], randArr[4],
+        randArr[3], randArr[2], randArr[1], randArr[0]
+    );
+
+    // Flush the buffers
+    if(!primeCache)
+    {
+        flush(&srcAVXArr);
+        flush(&dstAVXArr);
+    }
+
+    // Compare using AVX-512 instructions and measure the time
+    startTime = rdtsc();
+    for (size_t i = 0; i < numElements; i++)
+    {
+        mask = _mm512_cmpeq_epi8_mask(srcAVXArr, dstAVXArr); // Compare and get mask of results
+
+        if (mask != 0xFFFFFFFFFFFFFFFF) {
+            detailedAssert(false, "single_AVX512cmp() - Values mismatch! Compare failed.");
+            break;
+        }
+    }
+    endTime = rdtsc();
+
+    return (endTime - startTime);
 }

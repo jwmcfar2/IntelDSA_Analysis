@@ -31,6 +31,7 @@ typedef pthread_cond_t   _MX_CND;
 #define LL_NODE_PADDING (4096 - sizeof(void*))
 #define PAGE_SIZE       4096
 #define UINT32_MAXVAL   4294967295
+#define UINT64_MAXVAL   (UINT32_MAXVAL*2)
 #define L1I_KB          32
 #define L1D_KB          64
 #define L2_KB           2048

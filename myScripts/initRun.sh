@@ -12,8 +12,8 @@ if [[ -z $count || -z $mode ]]; then
     exit
 fi
 
-for ((i=0; i<=count; i++)); do
+for ((i=0; i<count; i++)); do
     myScripts/runScript.sh 1 $mode $fileTimeStamp $quietFlag
 done
 
-myScripts/getAvg.sh $count $mode $fileTimeStamp
+myScripts/getAvg.sh $count $mode $fileTimeStamp $quietFlag

@@ -5,7 +5,7 @@
 
 // Size / settings
 #define PORTAL_SIZE 4096
-#define _headerStr_ "DSA_EnQ DSA_memmov C_memcpy ASM_movq SSE1_movaps "\
+#define _headerStr_ "DSA_EnQ DSA_memmov ASM_movq C_memcpy SSE1_movaps "\
                     "SSE2_mov SSE4_mov AVX_256 AVX_512_32 AVX_512_64 AMX_LdSt\n"
 
 // Pull in externs from utils.h
@@ -18,9 +18,9 @@ uint64_t nprocs=0;
 // Perf Counter Indexes, indexed 0-9 (10 entries -> NUM_TESTS=10)
 typedef enum {
     DSAenqIndx, // Starts at 0
-    DSAmovRIndx,
-    CmemIndx,
+    DSAmovIndx,
     ASMmovqIndx,
+    CmemIndx,
     SSE1Indx,
     SSE2Indx,
     SSE4Indx,
@@ -58,7 +58,9 @@ uint64_t  bufferSize;
 uint64_t  resArr[NUM_TESTS];
 uint64_t  startTimeEnQ, endTimeEnQ;
 uint64_t  startTimeDSA, endTimeDSA;
+uint64_t  endTimePThread;
 uint8_t   descriptorRetry;
+bool      threadStarted=0;
 
 // Function List
 void        single_DSADescriptorInit();
@@ -66,3 +68,4 @@ void        finalizeDSA();
 uint8_t     enqcmd(void *dst, const void *src);
 void        adjustTimes();
 void        parseResults(char* fileName);
+void*       checkerThreadFn(void* args);

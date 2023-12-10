@@ -1,6 +1,6 @@
 src/main/hw*
 src/main/example*
 bin/
-results/*.png
-results/*.out
-results/BKP
+**/*.png
+**/*.out
+BKP
