@@ -428,13 +428,18 @@ bool volatile syscall_use_tile()
 uint64_t volatile single_clflush(uint64_t bufSize, bool primeCache){
     uint64_t startTime, endTime;
     dst=malloc(bufSize);
+    //printf("\n\t\tTest-A\n");
 
     // Init arr, and pull all of it into cache:
+    cpuMFence();
     for (int i=0; i<bufSize; i++)
         dst[i] = rand()%(255);
 
+    //printf("\t\tTest-B\n");
+
+    cpuMFence();
     startTime = rdtsc();
-    #pragma unroll
+    //#pragma unroll
     for (int i=0; i<bufSize; i+=64) {
         asm volatile ("clflush 0(%0)\n"
             :
@@ -442,6 +447,8 @@ uint64_t volatile single_clflush(uint64_t bufSize, bool primeCache){
             : "rax");
     }
     endTime = rdtsc();
+    cpuMFence();
+    //printf("\t\tTest-C\n\n\t");
 
     free(dst);
     return (endTime-startTime);
@@ -451,13 +458,17 @@ uint64_t volatile single_clflush(uint64_t bufSize, bool primeCache){
 uint64_t volatile single_clflushopt(uint64_t bufSize, bool primeCache){
     uint64_t startTime, endTime;
     dst=malloc(bufSize);
+    //printf("\n\t\tTest-A\n");
     
     // Init arr, and pull all of it into cache:
+    cpuMFence();
     for (int i=0; i<bufSize; i++)
         dst[i] = rand()%(255);
+    //printf("\t\tTest-B\n");
 
+    cpuMFence();
     startTime = rdtsc();
-    #pragma unroll
+    //#pragma unroll
     for (int i=0; i<bufSize; i+=64) {
         // Use inline assembly to flush the cache line containing dst[i].
         __asm__ volatile (
@@ -468,6 +479,8 @@ uint64_t volatile single_clflushopt(uint64_t bufSize, bool primeCache){
         );
     }
     endTime = rdtsc();
+    cpuMFence();
+    //printf("\t\tTest-C\n\n\t");
     
     free(dst);
     return (endTime-startTime);
@@ -666,17 +679,21 @@ uint64_t volatile single_AVX512cmp(uint64_t bufSize, bool primeCache){
     __mmask64 mask;
     size_t numElements = bufSize / sizeof(__m512i); // Number of 512-bit integers in the array
 
+    //printf("\n\t-Test-A\n");
     // Init values and assign them to the AVX vectors
     for(int i=0; i<8; i++)
         randArr[i] = rand() % UINT64_MAXVAL;
+    //printf("\t-Test-B\n");
     srcAVXArr = _mm512_set_epi64(
         randArr[7], randArr[6], randArr[5], randArr[4],
         randArr[3], randArr[2], randArr[1], randArr[0]
     );
+    //printf("\t-Test-C\n");
     dstAVXArr = _mm512_set_epi64(
         randArr[7], randArr[6], randArr[5], randArr[4],
         randArr[3], randArr[2], randArr[1], randArr[0]
     );
+    //printf("\t-Test-D\n");
 
     // Flush the buffers
     if(!primeCache)
@@ -684,6 +701,7 @@ uint64_t volatile single_AVX512cmp(uint64_t bufSize, bool primeCache){
         flush(&srcAVXArr);
         flush(&dstAVXArr);
     }
+    //printf("\t-Test-E\n");
 
     // Compare using AVX-512 instructions and measure the time
     startTime = rdtsc();
@@ -697,6 +715,7 @@ uint64_t volatile single_AVX512cmp(uint64_t bufSize, bool primeCache){
         }
     }
     endTime = rdtsc();
+    //printf("\t-Test-F\n\t");
 
     return (endTime - startTime);
 }

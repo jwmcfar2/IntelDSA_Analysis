@@ -42,30 +42,39 @@ int main(int argc, char *argv[]) {
                     // Module/Baseline Fn Tests
                     case 0: // C Mem Cp
                         resArr[CmemIndx] = single_memcpyC(bufferSize, mode);
+                        cpuMFence();
                         break;
                     case 1: // ASM movq
                         resArr[ASMmovqIndx] = single_movqInsASM(bufferSize, mode);
+                        cpuMFence();
                         break;
                     case 2: // SSE1
                         resArr[SSE1Indx] = single_SSE1movaps(bufferSize, mode);
+                        cpuMFence();
                         break;
                     case 3: // SSE2
                         resArr[SSE2Indx] = single_SSE2movdqa(bufferSize, mode);
+                        cpuMFence();
                         break;
                     case 4: // SSE4
                         resArr[SSE4Indx] = single_SSE4movntdq(bufferSize, mode);
+                        cpuMFence();
                         break;
                     case 5: // AVX 256
                         resArr[AVX256Indx] = single_AVX256(bufferSize, mode);
+                        cpuMFence();
                         break;
                     case 6: // AVX 512-32
                         resArr[AVX5_32Indx] = single_AVX512_32(bufferSize, mode);
+                        cpuMFence();
                         break;
                     case 7: // AVX 512-64
                         resArr[AVX5_64Indx] = single_AVX512_64(bufferSize, mode);
+                        cpuMFence();
                         break;
                     case 8: // AMX Ld/St Tile
                         resArr[AMXIndx] = single_AMX(bufferSize, mode);
+                        cpuMFence();
                         break;
 
                     case 9: // DSA Mem cp
@@ -100,6 +109,7 @@ int main(int argc, char *argv[]) {
                 }
 
                 // Should only run each case once (DSA Load / Run are grouped).
+                cpuMFence();
                 switchIndex++;
                 switchIndex %= (NUM_TESTS-1);
             }
@@ -158,6 +168,19 @@ void single_DSADescriptorInit(){
     descr.xfer_size = bufferSize;
     descr.src_addr  = (uintptr_t)srcDSA;
     descr.dst_addr  = (uintptr_t)dstDSA;
+    
+    uint8_t *descByteArr = (uint8_t *)&descr;
+    size_t len = sizeof(descr);
+    
+    printf("\nBatch Queue Descriptor Byte Array: \n");
+    for(int i=0; i<64; i+=8)
+    {
+        for(int j=7; j>=0; j--)
+        {
+            printf("%lu\t", descByteArr[i+j]);
+        }
+        printf("\n");
+    }
 
     // Map this Descriptor (<- user space) to DSA WQ portal (<- specific address space (privileged?))
     wq_portal = mmap(NULL, PORTAL_SIZE, PROT_WRITE, MAP_SHARED | MAP_POPULATE, fd, 0);

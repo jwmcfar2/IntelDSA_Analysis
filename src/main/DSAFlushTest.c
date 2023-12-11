@@ -40,14 +40,22 @@ int main(int argc, char *argv[]) {
                 {
                     /*******************/
                     // Module/Baseline Fn Tests
-                    case 0: // clflushopt
-                        resArr[clflushoptIndx] = single_clflushopt(bufferSize, mode);
-                        break;
-                    case 1: // clflush
+                    case 0: // clflush
+                        //printf("Starting clflush... ");
                         resArr[clflushIndx] = single_clflush(bufferSize, mode);
+                        cpuMFence();
+                        //printf(" ...done.\n");
+                        break;
+                        
+                    case 1: // clflushopt
+                        //printf("Starting clflushopt... ");
+                        resArr[clflushoptIndx] = single_clflushopt(bufferSize, mode);
+                        cpuMFence();
+                        //printf(" ...done.\n");
                         break;
 
                     case 2: // DSA flush op
+                        //printf("Starting DSA Flush... ");
                         descriptorRetry=1;
                         while(descriptorRetry)
                         {
@@ -70,17 +78,21 @@ int main(int argc, char *argv[]) {
                         }
                         
                         finalizeDSA();
+                        //printf(" ...done.\n");
                         break;
 
                     default:
-                        printf("DEBUG: switchNum=%d\n", switchIndex);
+                        //printf("DEBUG: switchNum=%d\n", switchIndex);
                         detailedAssert(false, "Main(): Switch 0 - Invalid Index.");
                         break;
                 }
+                //printf("Test-Switch1\n");
 
                 // Should only run each case once (DSA Load / Run are grouped).
+                cpuMFence();
                 switchIndex++;
                 switchIndex %= (NUM_TESTS-1);
+                //printf("Test-Switch2\n");
             }
             break;
 
@@ -91,8 +103,11 @@ int main(int argc, char *argv[]) {
     }
 
     // Output Results
+    //printf("Test-Main1\n");
     adjustTimes();
+    //printf("Test-Main2\n");
     parseResults(argv[2]);
+    //printf("Test-Main3\n");
 
     return 0;
 

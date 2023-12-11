@@ -1,3 +1,3 @@
 #!/bin/bash
 
-find -type f -name *.out -exec rm {} +
+find results/ -type f -name *.out -exec rm {} +

@@ -13,7 +13,9 @@ if [[ -z $count || -z $mode ]]; then
 fi
 
 for ((i=0; i<count; i++)); do
-    myScripts/runScript.sh 1 $mode $fileTimeStamp $quietFlag
+    myScripts/runScript.sh 1 $mode $fileTimeStamp $quietFlag &
+    wait $!
+    sleep 0.0000000001 # Script seems to lock up without this for larger runCounts -- dunno why
 done
 
 myScripts/getAvg.sh $count $mode $fileTimeStamp $quietFlag

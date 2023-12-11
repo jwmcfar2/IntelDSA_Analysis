@@ -41,22 +41,39 @@ int main(int argc, char *argv[]) {
                     /*******************/
                     // Module/Baseline Fn Tests
                     case 0: // SSE2cmp
+                        printf("Starting SSE2... ");
                         resArr[SSE2cmp] = single_SSE2cmp(bufferSize, mode);
+                        cpuMFence();
+                        printf(" ...done.\n");
                         break;
                     case 1: // SSE4cmp
+                        printf("Starting SSE4... ");
                         resArr[SSE4cmp] = single_SSE4cmp(bufferSize, mode);
+                        cpuMFence();
+                        printf(" ...done.\n");
                         break;
                     case 2: // C_memcmp
+                        printf("Starting C_memcmp... ");
                         resArr[C_memcmp] = single_Cmemcmp(bufferSize, mode);
+                        cpuMFence();
+                        printf(" ...done.\n");
                         break;
                     case 3: // AVX256cmp
+                        printf("Starting AVX256... ");
                         resArr[AVX256cmp] = single_AVX256cmp(bufferSize, mode);
+                        cpuMFence();
+                        printf(" ...done.\n");
                         break;
                     case 4: // AVX512cmp
+                        printf("\nStarting AVX512... ");
+                        //cpuMFence();
                         resArr[AVX512cmp] = single_AVX512cmp(bufferSize, mode);
+                        cpuMFence();
+                        printf(" ...done.\n");
                         break;
 
                     case 5: // DSA cmp op
+                        printf("Starting DSA cmp... ");
                         descriptorRetry=1;
                         while(descriptorRetry)
                         {
@@ -79,6 +96,7 @@ int main(int argc, char *argv[]) {
                         }
                         
                         finalizeDSA();
+                        printf(" ...done.\n");
                         break;
 
                     default:
@@ -88,6 +106,7 @@ int main(int argc, char *argv[]) {
                 }
 
                 // Should only run each case once (DSA Load / Run are grouped).
+                cpuMFence();
                 switchIndex++;
                 switchIndex %= (NUM_TESTS-1);
             }

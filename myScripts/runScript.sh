@@ -15,7 +15,7 @@ testFiles=("bin/DSAMemMvTest" "bin/DSAFlushTest" "bin/DSAFlushTest")
 runBufferSizes=(64 128 256 512 1024 2048 4096)
 bufferSizeSuffix=("B" "KB")
 bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
-modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
+#modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
 outFileArr=("" "" "" "" "" "" "")
 declare -A runCountsArr # Array to allow us to randomly choose a buffer size.
 currFileIndex=0
@@ -33,7 +33,7 @@ if [[ "$4" == "-q" ]]; then
 fi
 
 # Check if 'bin/DSA...' exists and is a file
-if [[ ! -f "${testFiles[0]}" || ! -f "${testFiles[1]}" ]]; then
+if [[ ! -f "${testFiles[0]}" || ! -f "${testFiles[1]}" || ! -f "${testFiles[2]}" ]]; then
     echo -e "\nFATAL: Missing Binary - Compile source code using \"myScripts/buildScript.sh\". Exiting...\n"
     exit
 fi
@@ -58,6 +58,7 @@ for bufferSize in "${bufferSizes[@]}"; do
 done
 
 for testTypeIndx in "${!testTypes[@]}"; do
+    #echo -e "DEBUG: TestTypeIndx = $testTypeIndx"
     bufferSizes=("${runBufferSizes[@]}")
 
     # Randomly choose one of the bufferSizes to perform the test, to further reduce optimization
@@ -76,7 +77,7 @@ for testTypeIndx in "${!testTypes[@]}"; do
         
         # Add file name to Arr if it doesn't exist
         outputResFile="results/${testTypes[testTypeIndx]}/${bufferType[runMode]}/"
-        outputResFile+="${sizeSubstr}_${modeType[runMode]}_${fileTimeStamp}.out"
+        outputResFile+="${sizeSubstr}_Cold_${fileTimeStamp}.out"
         for ((i=0; i<=currFileIndex; i++)); do
             # String exists in Arr already
             if [[ "${outFileArr[currFileIndex]}" == "$outputResFile" ]]; then
@@ -90,12 +91,13 @@ for testTypeIndx in "${!testTypes[@]}"; do
         done
 
         if [[ quietFlag -eq 0 ]]; then
-            echo -e "\nRunning ${modeType[runMode]}/${bufferType[runMode]}-Mode Tests for ${sizeSubstr}-sized Buffer..."
+            echo -e "\nRunning Cold/${bufferType[runMode]}-Mode Tests for ${sizeSubstr}-sized Buffer..."
         fi
 
         # Run ./myProgram a single time if it hasn't reached 1000 runs yet
         if [ ${runCountsArr[selectedBufferSize]} -lt $runcount ]; then
             # Run the test
+            echo -e "DEBUG: Running Test \"${testFiles[testTypeIndx]} $selectedBufferSize $outputResFile $runMode\"..."
             ${testFiles[testTypeIndx]} $selectedBufferSize $outputResFile $runMode &
             wait $!
             
@@ -126,5 +128,4 @@ for testTypeIndx in "${!testTypes[@]}"; do
     done
 done
 
-# MOVED AVERAGE TO OTHER SCRIPT
 exit

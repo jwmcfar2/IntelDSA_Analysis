@@ -1,6 +1,7 @@
 #!/bin/bash
 # ./graphScript.sh [runMode]
 
+testTypes=("memmv" "flush" "cmp")
 bufferSizes=("64B" "128B" "256B" "512B" "1KB" "2KB" "4KB") #8192 16384 32768 65536 131072) # Issue with Page Size Faults for single enQ DSA
 bufferSizeSuffix=("B" "KB")
 bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
@@ -9,12 +10,20 @@ graphAxisNames=("DSA EnQ" "DSA memmov" "C memcpy" "SSE1 movaps" "SSE2 mov" "SSE4
 normalVal=0
 largestAMX=0
 
+
+##### MAKE SURE TO FIX BASELINE (MOVED OVER FROM index=3 -> index=2) #####
+
+
+#################################
+######## Script Setup ###########
+
 runMode=$1
 # Choose run mode
 if [[ -z $runMode || $runMode -lt 0 || $runMode -gt 5 ]]; then
     echo -e "\nMissing/Invalid runMode - (Quicker syntax: \"./graphScript [runMode]\")"
     read -p "Enter run mode number (0-5, defined in DSATest.h): " runMode
 fi
+
 
 # Make temp files to parse info into:
 dataFile="results/.temp"
@@ -29,7 +38,7 @@ graphFile="results/.temp4"
 
 # Parse mode results into temp files
 for bufferIndex in ${!bufferSizes[@]}; do
-    mostRecentFile=$(find results/${bufferType[runMode]}_mov -type f -name "${bufferSizes[bufferIndex]}_${modeType[runMode]}_*_avg.out"\
+    mostRecentFile=$(find results/memmv/${bufferType[runMode]} -type f -name "${bufferSizes[bufferIndex]}_${modeType[runMode]}_*_avg.out"\
         -printf '%T@ %p\n' | sort -n | tail -n1 | cut -d' ' -f2-)
     awk 'NR == 2' "$mostRecentFile" >> "$dataFile"
 done
@@ -42,10 +51,10 @@ done
     read -ra cols <<< "$line"
     # Use 'bc' to calculate normalized values with two decimal places
     for i in {0..10}; do
-      if [[ $i -eq 3 ]]; then
+      if [[ $i -eq 2 ]]; then
         continue #printf "1.00\t" # Baseline column has a normalized value of 1
       else
-        normalVal=$(bc -l <<< "${cols[$i]}/${cols[3]}")
+        normalVal=$(bc -l <<< "${cols[$i]}/${cols[2]}")
         if [[ $i -eq 10 && $(bc -l <<< "$normalVal > $largestAMX") -eq 1 ]]; then
           largestAMX=$normalVal
         fi 
@@ -56,9 +65,9 @@ done
   done < "$dataFile" # Skip the first line if it's a header
 } > "$normalizedFile"
 # Round AMX Max to the nearest 1 decimal place
-echo "$largestAMX"
+#echo "$largestAMX"
 largestAMX_rounded=$(printf "%.1f" "$largestAMX")
-echo "$largestAMX_rounded"
+#echo "$largestAMX_rounded"
 
 # Reshape for gnuplot and add X-axis values:
 xval=0
@@ -107,15 +116,15 @@ set style line 1 lt 1 lc rgb "black" lw 1
 set key width 1
 set key height 0.4
 set key font ",11"
-set key at screen 0.325,0.85
+set key at screen .985,0.85
 set key spacing 1.1
 set key samplen 1
 set key box linestyle 1
-set label "{/=8:Bold Buffer Sizes}" at screen 0.21, 0.58
+set label "{/=8:Bold Buffer Sizes}" at screen 0.8625, 0.58
 
 # Margins configuration
 set lmargin at screen 0.1255
-set rmargin at screen 0.935
+set rmargin at screen 0.835
 #set tmargin at screen 0.975
 #set bmargin at screen 0.2
 
@@ -123,7 +132,7 @@ set rmargin at screen 0.935
 set title "{/=15:Bold Avg Latency for MemMov Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
 set termoption enhanced
 set ylabel "{/:Bold Normalized Latency}\n{/=10(Baseline=x86'movq')}" offset 1,0
-set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1,000)}" offset 0,-0.35
+set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=100)}" offset 0,-0.35
 set ytics nomirror
 
 # Custom xtics
@@ -133,7 +142,7 @@ set xtics scale 0
 $xtic_string
 
 # Setting up the y-range and x-range
-set yrange [0:7]
+set yrange [0:20]
 set xrange [-0.9:39.85]
 
 set style line 1 lc rgb '#E0F7FA' # color for "64B"
@@ -146,8 +155,8 @@ set style line 7 lc rgb '#01329B' # color for "4KB"
 
 # Normalized bounds with a red line at y=1
 set arrow from graph 0, first 1 to graph 1, first 1 nohead lc rgb "red" lw 2
-set arrow from screen 0.83, screen 0.75 to screen 0.84, screen 0.825 lc rgb "red" lw 2
-set label "{/=8:Bold Up to ${largestAMX_rounded}x Baseline}" textcolor rgb "red" at screen 0.65, 0.725
+set arrow from screen 0.73, screen 0.75 to screen 0.74, screen 0.825 lc rgb "red" lw 2
+set label "{/=8:Bold Up to ${largestAMX_rounded}x Baseline}" textcolor rgb "red" at screen 0.55, 0.725
 
 plot \
   '$graphFile' using 1:2 every ::0::0 with boxes ls 1 title "{/:Bold 64B}",\
