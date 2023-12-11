@@ -6,6 +6,7 @@
 // Size / settings
 #define PORTAL_SIZE 4096
 #define _headerStr_ "DSA_EnQ DSA_flush clflush clflushopt\n"
+#define MAX_BATCHSZ 32
 
 // Pull in externs from utils.h
 uint64_t flushReload_latency;
@@ -66,10 +67,11 @@ void        spectreDSADescriptorInit(volatile uint8_t *addr, size_t arrLen);
 void        DSAMemMvSpectre();
 void        TestSpectre();
 void        initArr2AndFlush();
-void        initDescrArrAndFlush();
+void        initDSAArr2AndFlush();
 uint8_t     spectreV1Gadget(size_t x);
 uint8_t     spectreDSAGadget(size_t x);
-void        testDescr();
+void        spectreDSABatch();
+void volatile buildDSAAttackOp();
 
 // Structures needed for SpectreV1 Test
 uint8_t arr1[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
@@ -81,6 +83,28 @@ size_t arr1Len = 16;
 size_t arr2Len = 256*512;
 size_t secretLen;
 uint8_t dummyReturnVar = 0;
-char *secretDSAGuess;
-struct dsa_hw_desc spectreDescr[256*512] = {0};
-size_t spectreDescrLen = 256*512;
+//char *secretDSAGuess;
+//struct dsa_hw_desc spectreDescr[256*512] = {0};
+//size_t spectreDescrLen = 256*512;
+
+// Structures needed for Spectre DSA Batch, adapted from OG Spectre:
+uint8_t arr1DSA[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+uint8_t arr2DSA[256*512];
+struct dsa_completion_record secretCompRec __attribute__((aligned(32)));
+uint8_t *secretDSAGuess;
+size_t arr1DSALen = 16;
+size_t arr2DSALen = 256*512;
+size_t secretDescByteLen;
+uint8_t dummyDSAReturnVar = 0;
+
+// New Structures needed for 'Batch' version of this attack
+struct dsa_hw_desc *secretDescList; //[MAX_BATCHSZ] = {0};
+struct dsa_hw_desc *stolenDescList;
+struct dsa_hw_desc secretBatchDesc = {0};
+struct dsa_hw_desc attkrBatchDesc = {0};
+uint8_t *srcVictimArr[MAX_BATCHSZ];
+uint8_t *dstVictimArr[MAX_BATCHSZ];
+uint8_t *dstAttkArr[MAX_BATCHSZ];
+uint8_t *secretByteArr;
+uint8_t *attkTargetBytes;
+uintptr_t stolenPointer;

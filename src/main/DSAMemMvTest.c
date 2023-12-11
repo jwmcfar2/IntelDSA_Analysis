@@ -142,7 +142,7 @@ void single_DSADescriptorInit(){
 
     // WQ Path Check
     fd = open(wqPath, O_RDWR);
-    detailedAssert((fd >= 0), "DSA Descriptor Init() failed opening WQ portal file from path.");
+    detailedAssert((fd >= 0), "DSA Descriptor Init() - failed opening WQ portal file from path.");
 
     // Chose DSA Instruction
     descr.opcode = DSA_OPCODE_MEMMOVE;
