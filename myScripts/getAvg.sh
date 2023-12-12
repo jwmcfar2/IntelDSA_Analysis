@@ -11,13 +11,13 @@ fi
 
 testTypes=("memmv" "flush" "cmp")
 bufferStrs=("64B" "128B" "256B" "512B" "1KB" "2KB" "4KB")
-bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
-modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
+bufferType=("single" "single" "bulk" "bulk" "bulk" "bulk")
+modeType=("Cold" "Cold" "Bulk" "Bulk" "Contention" "Contention")
 outFileArr=("" "" "" "" "" "" "")
 
 for testTypeIndx in "${!testTypes[@]}"; do
     for ((i=0; i<${#bufferStrs[@]}; i++)); do
-        outFileArr[i]="results/${testTypes[testTypeIndx]}/${bufferType[mode]}/${bufferStrs[i]}_${modeType}_${timeStamp}.out"
+        outFileArr[i]="results/${testTypes[testTypeIndx]}/${bufferType[mode]}/${bufferStrs[i]}_${modeType[mode]}_${timeStamp}.out"
     done
 
     if [[ $quietFlag -eq 0 ]]; then

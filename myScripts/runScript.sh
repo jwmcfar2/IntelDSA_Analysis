@@ -14,8 +14,8 @@ testFiles=("bin/DSAMemMvTest" "bin/DSAFlushTest" "bin/DSACmpTest")
 
 runBufferSizes=(64 128 256 512 1024 2048 4096)
 bufferSizeSuffix=("B" "KB")
-bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
-#modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
+bufferType=("single" "single" "bulk" "bulk" "bulk" "bulk")
+modeType=("Cold" "Cold" "Bulk" "Bulk" "Contention" "Contention")
 outFileArr=("" "" "" "" "" "" "")
 declare -A runCountsArr # Array to allow us to randomly choose a buffer size.
 currFileIndex=0
@@ -77,7 +77,7 @@ for testTypeIndx in "${!testTypes[@]}"; do
         
         # Add file name to Arr if it doesn't exist
         outputResFile="results/${testTypes[testTypeIndx]}/${bufferType[runMode]}/"
-        outputResFile+="${sizeSubstr}_Cold_${fileTimeStamp}.out"
+        outputResFile+="${sizeSubstr}_${modeType[runMode]}_${fileTimeStamp}.out"
         for ((i=0; i<=currFileIndex; i++)); do
             # String exists in Arr already
             if [[ "${outFileArr[currFileIndex]}" == "$outputResFile" ]]; then

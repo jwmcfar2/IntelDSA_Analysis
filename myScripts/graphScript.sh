@@ -2,13 +2,14 @@
 # ./graphScript.sh [runMode]
 #############################
 # I'm sorry in advanced to anyone unfortunate enough to see how clunky this is... gnuplot broke me.
+# Fair warning, y ranges need to be tweaked manually for every graph.
 ###################################################################################################
 
 testTypes=("memmv" "flush" "cmp")
 bufferSizes=("64B" "128B" "256B" "512B" "1KB" "2KB" "4KB")
 bufferSizeSuffix=("B" "KB")
-bufferType=("single" "single" "single" "bulk" "bulk" "bulk")
-modeType=("Cold" "Hits" "Contention" "Cold" "Hits" "Contention")
+bufferType=("single" "single" "bulk" "bulk" "bulk" "bulk")
+modeType=("Cold" "Cold" "Bulk" "Bulk" "Contention" "Contention")
 axisNamesMemMv=("DSA EnQ" "DSA memmov" "C memcpy" "SSE1 movaps" "SSE2 mov" "SSE4 mov" "AVX 256" "AVX 512-32" "AVX 512-64" "AMX LdSt")
 axisNamesFlush=("DSA EnQ" "DSA Flush" "clflushopt")
 axisNamesCmp=("DSA EnQ" "DSA Compare" "SSE2" "SSE4" "AVX-256" "AVX-512")
@@ -169,6 +170,35 @@ for ((col=1; col<=num_columns; col++)); do
     echo "" >> "$graphFileCmp"
 done
 #################################
+# Set to blue colors if 'Cold' Test, orange if 'Bulk' tests
+if [[ $runMode -eq 0 ]]; then
+  colorStr="set style line 1 lc rgb '#E0F7FA' # color for \"64B\"
+set style line 2 lc rgb '#B3E5FC' # color for \"128B\"
+set style line 3 lc rgb '#4FC3F7' # color for \"512B\"
+set style line 4 lc rgb '#039BE5' # color for \"256B\"
+set style line 5 lc rgb '#0277BD' # color for \"1KB\"
+set style line 6 lc rgb '#01579B' # color for \"2KB\"
+set style line 7 lc rgb '#01329B' # color for \"4KB\""
+else
+  colorStr="set style line 1 lc rgb '#FFF9C4' # color for \"64B\"
+set style line 2 lc rgb '#FFECB3' # color for \"128B\"
+set style line 3 lc rgb '#FFE082' # color for \"512B\"
+set style line 4 lc rgb '#FFD54F' # color for \"256B\"
+set style line 5 lc rgb '#FFC107' # color for \"1KB\"
+set style line 6 lc rgb '#FFA000' # color for \"2KB\"
+set style line 7 lc rgb '#FF6F00' # color for \"4KB\""
+fi
+#################################
+
+if [[ $runMode -eq 0 ]]; then
+  outputFile="results/Normalized_MemMv_Time_ColdMiss.png"
+  titleStr="set title \"{/=15:Bold Avg Latency for MemMov Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}\""
+  xlabelStr="set xlabel \"{/=14:Bold Instruction Type}\n{/=10(N=1,000)}\" offset 0,-0.35"
+else
+  outputFile="results/Normalized_MemMv_Time_Bulk.png"
+  titleStr="set title \"{/=15:Bold Avg Latency for MemMov Instructions}\n{/=12:Bold Bulk Run Instructions}\""
+  xlabelStr="set xlabel \"{/=14:Bold Instruction Type}\n{/=10(N=100,000)}\" offset 0,-0.35"
+fi
 
 #################################
 ########## Graph 1 ##############
@@ -187,7 +217,7 @@ xtic_string+=")"
 #exit
 
 # Define the output PNG file
-outputFile="results/Normalized_MemMv_Time_ColdMiss.png"
+#outputFile="results/Normalized_MemMv_Time_ColdMiss.png"
 
 gnuplot <<- EOF
 set terminal png
@@ -216,10 +246,12 @@ set rmargin at screen 0.835
 #set bmargin at screen 0.2
 
 # Axes, labels, and grid configuration
-set title "{/=15:Bold Avg Latency for MemMov Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
+#set title "{/=15:Bold Avg Latency for MemMov Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
+$titleStr
 set termoption enhanced
 set ylabel "{/:Bold Normalized Latency}\n{/=10(Baseline=x86 'movq')}" offset 1,0
-set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1,000)}" offset 0,-0.35
+#set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1,000)}" offset 0,-0.35
+$xlabelStr
 set ytics nomirror
 
 # Custom xtics
@@ -229,21 +261,15 @@ set xtics scale 0
 $xtic_string
 
 # Setting up the y-range and x-range
-set yrange [0:10]
+set yrange [0:3]
 set xrange [-0.9:39.85]
 
-set style line 1 lc rgb '#E0F7FA' # color for "64B"
-set style line 2 lc rgb '#B3E5FC' # color for "128B"
-set style line 3 lc rgb '#4FC3F7' # color for "512B"
-set style line 4 lc rgb '#039BE5' # color for "256B"
-set style line 5 lc rgb '#0277BD' # color for "1KB"
-set style line 6 lc rgb '#01579B' # color for "2KB"
-set style line 7 lc rgb '#01329B' # color for "4KB"
+$colorStr
 
 # Normalized bounds with a red line at y=1
 set arrow from graph 0, first 1 to graph 1, first 1 nohead lc rgb "red" lw 2
-set arrow from screen 0.73, screen 0.75 to screen 0.74, screen 0.825 lc rgb "red" lw 2
-set label "{/=8:Bold Up to ${largestAMX_rounded}x Baseline}" textcolor rgb "red" at screen 0.55, 0.725
+#set arrow from screen 0.73, screen 0.75 to screen 0.74, screen 0.825 lc rgb "red" lw 2
+#set label "{/=8:Bold Up to ${largestAMX_rounded}x Baseline}" textcolor rgb "red" at screen 0.55, 0.725
 
 plot \
   '$graphFileMemMv' using 1:2 every ::0::0 with boxes ls 1 title "{/:Bold 64B}",\
@@ -259,6 +285,16 @@ EOF
 echo -e "\nDone! Graph saved to: $outputFile\n"
 #################################
 #################################
+
+if [[ $runMode -eq 0 ]]; then
+  outputFile="results/Normalized_Flush_Time_ColdMiss.png"
+  titleStr="set title \"{/=15:Bold Avg Latency for Flush Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}\""
+  xlabelStr="set xlabel \"{/=14:Bold Instruction Type}\n{/=10(N=1,000)}\" offset 0,-0.35"
+else
+  outputFile="results/Normalized_Flush_Time_Bulk.png"
+  titleStr="set title \"{/=15:Bold Avg Latency for Flush Instructions}\n{/=12:Bold Bulk Run Instructions}\""
+  xlabelStr="set xlabel \"{/=14:Bold Instruction Type}\n{/=10(N=100,000)}\" offset 0,-0.35"
+fi
 
 #################################
 ########## Graph 2 ##############
@@ -277,7 +313,7 @@ xtic_string+=")"
 #exit
 
 # Define the output PNG file
-outputFile="results/Normalized_Flush_Time_ColdMiss.png"
+#outputFile="results/Normalized_Flush_Time_ColdMiss.png"
 
 gnuplot <<- EOF
 set terminal png
@@ -306,10 +342,12 @@ set rmargin at screen 0.835
 #set bmargin at screen 0.2
 
 # Axes, labels, and grid configuration
-set title "{/=15:Bold Avg Latency for Flush Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
+#set title "{/=15:Bold Avg Latency for Flush Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
+$titleStr
 set termoption enhanced
 set ylabel "{/:Bold Normalized Latency}\n{/=10(Baseline=x86 'clflush')}" offset 1,0
-set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1,000)}" offset 0,0
+#set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1,000)}" offset 0,0
+$xlabelStr
 set ytics nomirror
 
 # Custom xtics
@@ -319,16 +357,10 @@ set xtics scale 0
 $xtic_string
 
 # Setting up the y-range and x-range
-set yrange [0:8]
+set yrange [0:2]
 set xrange [-0.9:12]
 
-set style line 1 lc rgb '#E0F7FA' # color for "64B"
-set style line 2 lc rgb '#B3E5FC' # color for "128B"
-set style line 3 lc rgb '#4FC3F7' # color for "512B"
-set style line 4 lc rgb '#039BE5' # color for "256B"
-set style line 5 lc rgb '#0277BD' # color for "1KB"
-set style line 6 lc rgb '#01579B' # color for "2KB"
-set style line 7 lc rgb '#01329B' # color for "4KB"
+$colorStr
 
 # Normalized bounds with a red line at y=1
 set arrow from graph 0, first 1 to graph 1, first 1 nohead lc rgb "red" lw 2
@@ -350,6 +382,16 @@ echo -e "Done! Graph saved to: $outputFile\n"
 #################################
 #################################
 
+if [[ $runMode -eq 0 ]]; then
+  outputFile="results/Normalized_Compare_Time_ColdMiss.png"
+  titleStr="set title \"{/=15:Bold Avg Latency for Compare Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}\""
+  xlabelStr="set xlabel \"{/=14:Bold Instruction Type}\n{/=10(N=1,000)}\" offset 0,-0.35"
+else
+  outputFile="results/Normalized_Compare_Time_Bulk.png"
+  titleStr="set title \"{/=15:Bold Avg Latency for Compare Instructions}\n{/=12:Bold Bulk Run Instructions}\""
+  xlabelStr="set xlabel \"{/=14:Bold Instruction Type}\n{/=10(N=100,000)}\" offset 0,-0.35"
+fi
+
 #################################
 ########## Graph 3 ##############
 # Initialize the xtics string
@@ -367,7 +409,7 @@ xtic_string+=")"
 #exit
 
 # Define the output PNG file
-outputFile="results/Normalized_Compare_Time_ColdMiss.png"
+#outputFile="results/Normalized_Compare_Time_ColdMiss.png"
 
 gnuplot <<- EOF
 set terminal png
@@ -396,10 +438,12 @@ set rmargin at screen 0.835
 #set bmargin at screen 0.2
 
 # Axes, labels, and grid configuration
-set title "{/=15:Bold Avg Latency for Compare Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
+#set title "{/=15:Bold Avg Latency for Compare Instructions}\n{/=12:Bold Serialized 'Cold Miss' Instructions}"
+$titleStr
 set termoption enhanced
 set ylabel "{/:Bold Normalized Latency}\n{/=10(Baseline=x86 'C memcmp')}" offset 1,0
-set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1,000)}" offset 0,0
+#set xlabel "{/=14:Bold Instruction Type}\n{/=10(N=1,000)}" offset 0,0
+$xlabelStr
 set ytics nomirror
 
 # Custom xtics
@@ -409,16 +453,10 @@ set xtics scale 0
 $xtic_string
 
 # Setting up the y-range and x-range
-set yrange [0:1.5]
+set yrange [0:4]
 set xrange [-0.9:23.8]
 
-set style line 1 lc rgb '#E0F7FA' # color for "64B"
-set style line 2 lc rgb '#B3E5FC' # color for "128B"
-set style line 3 lc rgb '#4FC3F7' # color for "512B"
-set style line 4 lc rgb '#039BE5' # color for "256B"
-set style line 5 lc rgb '#0277BD' # color for "1KB"
-set style line 6 lc rgb '#01579B' # color for "2KB"
-set style line 7 lc rgb '#01329B' # color for "4KB"
+$colorStr
 
 # Normalized bounds with a red line at y=1
 set arrow from graph 0, first 1 to graph 1, first 1 nohead lc rgb "red" lw 2
