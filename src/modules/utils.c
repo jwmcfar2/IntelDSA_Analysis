@@ -200,6 +200,8 @@ void profileCacheLatency(){
     //printf("DEBUG: Avg LLC Miss Latency (Cycles)     =  %ld\n", LLC_Miss_Latency);
 }
 
+// Don't run - seems to be a huge performance impact, low accuracy for diff ins, causes errors...
+// Best to just accept the overhead from rdtsc()...
 void profileRDTSC(){
     int runs=1000000;
     uint64_t startTime, endTime;

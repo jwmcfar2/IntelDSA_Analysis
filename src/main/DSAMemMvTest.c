@@ -1,7 +1,6 @@
 #include "DSAMemMvTest.h"
 
 int main(int argc, char *argv[]) {
-    pthread_t checkerThread;
     uint8_t switchIndex;
     srand(time(NULL));
 
@@ -11,17 +10,6 @@ int main(int argc, char *argv[]) {
     mode = (modeEnum)atoi(argv[3]);
     bufferSize = (unsigned int)strtoul(argv[1], NULL, 10);
     detailedAssert((bufferSize%64==0 && bufferSize<=4096),"Main() - Please specify bufferSize that is a factor of 64, and <= 4096.");
- 
-    // Profile RDTSC latency overhead
-    profileRDTSC();
-
-    // Spawn DSA checker thread...
-    compRec.status=0;
-    compilerMFence();
-    spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
-    while(!threadStarted){
-        spawnNOPs(1);
-    }
     cpuMFence();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -88,18 +76,16 @@ int main(int argc, char *argv[]) {
                             // enqCMD failed - respawn checker thread...
                             if(descriptorRetry)
                             {
-                                compRec.status=0;
-                                threadStarted=0;
-                                pthread_join(checkerThread, NULL);
-                                spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
-                                while(!threadStarted){
-                                    spawnNOPs(1);
-                                }
                                 cpuMFence();
+                                spawnNOPs(1);
                             }
                         }
                         
                         finalizeDSA();
+                        munmap(wq_portal, PORTAL_SIZE);
+                        free(srcDSA);
+                        free(dstDSA);
+
                         break;
 
                     default:
@@ -115,6 +101,64 @@ int main(int argc, char *argv[]) {
             }
             break;
 
+        // We don't need such convoluted randomization for these tests,
+        // Since we are looking at 'best case' over time - not 'cold miss'
+        case 2: // Bulk Test
+            uint64_t tempTime, totalTime=0;
+
+            // Other Tests first
+            resArr[CmemIndx] = bulk_memcpyC(bufferSize);
+            resArr[ASMmovqIndx] = bulk_movqInsASM(bufferSize);
+            resArr[SSE1Indx] = bulk_SSE1movaps(bufferSize);
+            resArr[SSE2Indx] = bulk_SSE2movdqa(bufferSize);
+            resArr[SSE4Indx] = bulk_SSE4movntdq(bufferSize);
+            resArr[AVX256Indx] = bulk_AVX256(bufferSize);
+            resArr[AVX5_32Indx] = bulk_AVX512_32(bufferSize);
+            resArr[AVX5_64Indx] = bulk_AVX512_64(bufferSize);
+            for(int i=0; i<BULK_TEST_COUNT; i++)
+            {
+                tempTime = single_AMX(bufferSize, false);
+                detailedAssert(((uint64_t)(totalTime+tempTime)>totalTime), "bulk_AMX() - PERF METRIC OVERFLOW ERR.");
+                totalTime += tempTime;
+            }
+            resArr[AMXIndx] = totalTime/BULK_TEST_COUNT;
+
+            // Now do DSA Op
+            uint64_t totalEnQTime=0;
+            uint64_t totalDSATime=0;
+            single_DSADescriptorInit();
+            compilerMFence();
+            for(int i=0; i<BULK_TEST_COUNT; i++)
+            {
+                descriptorRetry=1;
+                while(descriptorRetry)
+                {
+                    descriptorRetry = enqcmd(wq_portal, &descr);
+                    
+                    // enqCMD failed - respawn checker thread...
+                    if(descriptorRetry)
+                    {   
+                        cpuMFence();
+                        spawnNOPs(1);
+                    }
+                }
+                compilerMFence();
+                finalizeDSA();
+                detailedAssert(((uint64_t)(totalEnQTime+resArr[DSAenqIndx]) > totalEnQTime), "Main() - DSA_EnQ - PERF METRIC OVERFLOW ERR.");
+                detailedAssert(((uint64_t)(totalDSATime+resArr[DSAmovIndx]) > totalDSATime), "Main() - DSA_Op - PERF METRIC OVERFLOW ERR.");
+                totalEnQTime += resArr[DSAenqIndx];
+                totalDSATime += resArr[DSAmovIndx];
+                resArr[DSAenqIndx] = 0;
+                resArr[DSAmovIndx] = 0;
+            }
+            resArr[DSAenqIndx] = totalEnQTime/BULK_TEST_COUNT;
+            resArr[DSAmovIndx] = totalDSATime/BULK_TEST_COUNT;
+            munmap(wq_portal, PORTAL_SIZE);
+            free(srcDSA);
+            free(dstDSA);
+
+            break;
+
         default:
             printf("DEBUG: ARGV=%s, Mode=%d.\n", atoi(argv[3]), mode);
             printf("Mode Invalid, or unimplemented. Exiting...\n");
@@ -122,7 +166,6 @@ int main(int argc, char *argv[]) {
     }
 
     // Output Results
-    adjustTimes();
     parseResults(argv[2]);
 
     return 0;
@@ -172,16 +215,6 @@ void single_DSADescriptorInit(){
     uint8_t *descByteArr = (uint8_t *)&descr;
     size_t len = sizeof(descr);
     
-    printf("\nBatch Queue Descriptor Byte Array: \n");
-    for(int i=0; i<64; i+=8)
-    {
-        for(int j=7; j>=0; j--)
-        {
-            printf("%lu\t", descByteArr[i+j]);
-        }
-        printf("\n");
-    }
-
     // Map this Descriptor (<- user space) to DSA WQ portal (<- specific address space (privileged?))
     wq_portal = mmap(NULL, PORTAL_SIZE, PROT_WRITE, MAP_SHARED | MAP_POPULATE, fd, 0);
     detailedAssert(!(wq_portal == MAP_FAILED), "Descriptor Init() failed to map to portal.");
@@ -193,21 +226,24 @@ void finalizeDSA(){
     valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
     uint64_t serialLatency, pthreadLatency;
 
-    munmap(wq_portal, PORTAL_SIZE);
-    free(srcDSA);
-    free(dstDSA);
-
     serialLatency = (endTimeDSA-startTimeDSA);
-    pthreadLatency = (endTimePThread-startTimeDSA);
-    //printf("DEBUG: pthread lat = %lu cycs, serial lat= %lu cycs\n", pthreadLatency, serialLatency);
+
+    if(serialLatency > 1000000)
+    {
+        printf("ERROR - DETECTED SERIAL LATENCY THAT IS WAYYYY TO HIGH!");
+        printf("EndTime   = Cycle: %lu\n", endTimeDSA);
+        printf("StartTime = Cycle: %lu\n", startTimeDSA);
+        abort();
+    }
 
     resArr[DSAenqIndx]  = endTimeEnQ-startTimeEnQ;
-    resArr[DSAmovIndx] = (pthreadLatency < serialLatency)? pthreadLatency : serialLatency;
+    resArr[DSAmovIndx]  = serialLatency;
 }
 
 // Actual ASM functionality to send descriptor 
 uint8_t enqcmd(void *_dest, const void *_src){
     uint8_t retry;
+    cpuMFence();
     startTimeEnQ = rdtsc();
     asm volatile(".byte 0xf2, 0x0f, 0x38, 0xf8, 0x02\t\n"
                  "setz %0\t\n"
@@ -216,6 +252,7 @@ uint8_t enqcmd(void *_dest, const void *_src){
     while(compRec.status!=1){}
     endTimeDSA = rdtsc();
     startTimeDSA = endTimeEnQ;
+    cpuMFence();
 
     //printf("DEBUG: endTimeEnQ Timestamp =         %lu\n", endTimeEnQ);
     //printf("DEBUG: endTimeEnQ elapsed time =         %lu\n", endTimeDSA-startTimeDSA);
@@ -227,6 +264,13 @@ uint8_t enqcmd(void *_dest, const void *_src){
 void adjustTimes(){
     for(int i=0; i<NUM_TESTS; i++)
         resArr[i] -= RTDSC_latency;
+
+    if(resArr[DSAmovIndx] > 1000000)
+    {
+        printf("ERROR - DETECTED ~ADJUSTED LATENCY~ THAT IS WAYYYY TO HIGH!");
+        printf("endTimeDSA-startTimeDSA = %lu, RTDSC_latency = %lu\n", endTimeDSA-startTimeDSA, RTDSC_latency);
+        abort();
+    }
 }
 
 void parseResults(char* fileName){
@@ -267,6 +311,7 @@ void parseResults(char* fileName){
     system(cmdStr);
 }
 
+// Caused WAY too many issues - for infrequent cases of smaller observed latency
 void* checkerThreadFn(void* args)
 {
     endTimePThread=0;

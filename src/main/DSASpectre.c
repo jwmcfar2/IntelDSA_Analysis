@@ -1,56 +1,14 @@
 #include "DSASpectre.h"
 
 int main(int argc, char *argv[]) {
-    //uint8_t switchIndex;
     srand(time(NULL));
-
-    // Parse program inputs and do initial checks...
-    //detailedAssert((argc==4),"Main() - Not enough input arguments specified (./program bufferSize resfile mode).");
-    //detailedAssert((atoi(argv[3])>=0 && atoi(argv[3])<NUM_MODES),"Main() - 'Mode' Num Invalid.");
-    //mode = (modeEnum)atoi(argv[3]);
     bufferSize = (unsigned int)strtoul(argv[1], NULL, 10);
-    //detailedAssert((bufferSize%64==0),"Main() - Please specify bufferSize that is a factor of 64, and <= 4096."); //  && bufferSize<=4096
-
-    //profileCacheLatency();
-
-    // Profile RDTSC latency overhead
-    profileRDTSC();
-
-    // Spawn DSA checker thread...
-    /*compRec.status=0;
-    compilerMFence();
-    spawnThreadOnDiffCore(&victimThread, victimThreadFn);
-    spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
-    while(!threadStarted){
-        spawnNOPs(1);
-    }
-    cpuMFence();*/
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //~~~~~~~~~~~~ BEGIN TESTS ~~~~~~~~~~~~//
     TestSpectre();
-    //single_DSADescriptorInit();
-    //DSAMemMvSpectre();
-    //testDescr();
     spectreDSABatch();
-    //testPtr();
-
-    // Output Results
-    //printf("Test-Main1\n");
-    //adjustTimes();
-    //printf("Test-Main2\n");
-    //parseResults(argv[2]);
-    //printf("Test-Main3\n");
-
     return 0;
-
-    // DEBUG ONLY
-    //printf("\n%s", _headerStr_);
-    //for(int i=0; i<NUM_TESTS; i++)
-    //    printf("   %lu    ", resArr[i]);
-    //printf("\n\n");
-
-    //return 0;
 }
 
 // Actual ASM functionality to send descriptor 

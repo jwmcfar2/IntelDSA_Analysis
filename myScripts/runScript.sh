@@ -10,7 +10,7 @@
 cpuAffin="7"
 
 testTypes=("memmv" "flush" "cmp")
-testFiles=("bin/DSAMemMvTest" "bin/DSAFlushTest" "bin/DSAFlushTest")
+testFiles=("bin/DSAMemMvTest" "bin/DSAFlushTest" "bin/DSACmpTest")
 
 runBufferSizes=(64 128 256 512 1024 2048 4096)
 bufferSizeSuffix=("B" "KB")
@@ -97,7 +97,7 @@ for testTypeIndx in "${!testTypes[@]}"; do
         # Run ./myProgram a single time if it hasn't reached 1000 runs yet
         if [ ${runCountsArr[selectedBufferSize]} -lt $runcount ]; then
             # Run the test
-            echo -e "DEBUG: Running Test \"${testFiles[testTypeIndx]} $selectedBufferSize $outputResFile $runMode\"..."
+            #echo -e "DEBUG: Running Test \"${testFiles[testTypeIndx]} $selectedBufferSize $outputResFile $runMode\"..."
             ${testFiles[testTypeIndx]} $selectedBufferSize $outputResFile $runMode &
             wait $!
             

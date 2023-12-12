@@ -1,7 +1,6 @@
 #include "DSAFlushTest.h"
 
 int main(int argc, char *argv[]) {
-    pthread_t checkerThread;
     uint8_t switchIndex;
     srand(time(NULL));
 
@@ -11,17 +10,6 @@ int main(int argc, char *argv[]) {
     mode = (modeEnum)atoi(argv[3]);
     bufferSize = (unsigned int)strtoul(argv[1], NULL, 10);
     detailedAssert((bufferSize%64==0),"Main() - Please specify bufferSize that is a factor of 64, and <= 4096."); //  && bufferSize<=4096
-
-    // Profile RDTSC latency overhead
-    profileRDTSC();
-
-    // Spawn DSA checker thread...
-    compRec.status=0;
-    compilerMFence();
-    spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
-    while(!threadStarted){
-        spawnNOPs(1);
-    }
     cpuMFence();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -41,21 +29,16 @@ int main(int argc, char *argv[]) {
                     /*******************/
                     // Module/Baseline Fn Tests
                     case 0: // clflush
-                        //printf("Starting clflush... ");
                         resArr[clflushIndx] = single_clflush(bufferSize, mode);
                         cpuMFence();
-                        //printf(" ...done.\n");
                         break;
                         
                     case 1: // clflushopt
-                        //printf("Starting clflushopt... ");
                         resArr[clflushoptIndx] = single_clflushopt(bufferSize, mode);
                         cpuMFence();
-                        //printf(" ...done.\n");
                         break;
 
                     case 2: // DSA flush op
-                        //printf("Starting DSA Flush... ");
                         descriptorRetry=1;
                         while(descriptorRetry)
                         {
@@ -66,34 +49,68 @@ int main(int argc, char *argv[]) {
                             // enqCMD failed - respawn checker thread...
                             if(descriptorRetry)
                             {
-                                compRec.status=0;
-                                threadStarted=0;
-                                pthread_join(checkerThread, NULL);
-                                spawnThreadOnSiblingCore(&checkerThread, checkerThreadFn);
-                                while(!threadStarted){
-                                    spawnNOPs(1);
-                                }
                                 cpuMFence();
+                                spawnNOPs(1);
                             }
                         }
                         
                         finalizeDSA();
-                        //printf(" ...done.\n");
+                        munmap(wq_portal, PORTAL_SIZE);
+                        free(dstDSA);
                         break;
 
                     default:
-                        //printf("DEBUG: switchNum=%d\n", switchIndex);
                         detailedAssert(false, "Main(): Switch 0 - Invalid Index.");
                         break;
                 }
-                //printf("Test-Switch1\n");
 
                 // Should only run each case once (DSA Load / Run are grouped).
                 cpuMFence();
                 switchIndex++;
                 switchIndex %= (NUM_TESTS-1);
-                //printf("Test-Switch2\n");
             }
+            break;
+
+        // We don't need such convoluted randomization for these tests,
+        // Since we are looking at 'best case' over time - not 'cold miss'
+        case 2: // Bulk Test
+            // Other Tests first
+            resArr[clflushIndx] = bulk_clflush(bufferSize);
+            resArr[clflushoptIndx] = bulk_clflushopt(bufferSize);
+
+            // Now do DSA Op
+            uint64_t totalEnQTime=0;
+            uint64_t totalDSATime=0;
+            single_DSADescriptorInit();
+            compilerMFence();
+            for(int i=0; i<BULK_TEST_COUNT; i++)
+            {
+                descriptorRetry=1;
+                while(descriptorRetry)
+                {
+                    descriptorRetry = enqcmd(wq_portal, &descr);
+                    
+                    // enqCMD failed - respawn checker thread...
+                    if(descriptorRetry)
+                    {   
+                        cpuMFence();
+                        spawnNOPs(1);
+                    }
+                }
+                compilerMFence();
+                finalizeDSA();
+                detailedAssert(((uint64_t)(totalEnQTime+resArr[DSAenqIndx]) > totalEnQTime), "Main() - DSA_EnQ - PERF METRIC OVERFLOW ERR.");
+                detailedAssert(((uint64_t)(totalDSATime+resArr[DSAFlushIndx]) > totalDSATime), "Main() - DSA_Op - PERF METRIC OVERFLOW ERR.");
+                totalEnQTime += resArr[DSAenqIndx];
+                totalDSATime += resArr[DSAFlushIndx];
+                resArr[DSAenqIndx] = 0;
+                resArr[DSAFlushIndx] = 0;
+            }
+            resArr[DSAenqIndx] = totalEnQTime/BULK_TEST_COUNT;
+            resArr[DSAFlushIndx] = totalDSATime/BULK_TEST_COUNT;
+            munmap(wq_portal, PORTAL_SIZE);
+            free(dstDSA);
+
             break;
 
         default:
@@ -103,11 +120,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Output Results
-    //printf("Test-Main1\n");
-    adjustTimes();
-    //printf("Test-Main2\n");
     parseResults(argv[2]);
-    //printf("Test-Main3\n");
 
     return 0;
 
@@ -139,18 +152,13 @@ void single_DSADescriptorInit(){
     descr.flags |= IDXD_OP_FLAG_CRAV;
     descr.completion_addr = (uintptr_t)&compRec;
 
-    // Send writes to cache, not mem
-    //descr.flags |= IDXD_OP_FLAG_CC;
-
     // Init srcDSA
-    //srcDSA = aligned_alloc(64, bufferSize);
     dstDSA = aligned_alloc(64, bufferSize);
     for(int i=0; i<bufferSize; i++)
         dstDSA[i] = rand()%(255);
 
     // Set packet info
     descr.xfer_size = bufferSize;
-    //descr.src_addr  = (uintptr_t)srcDSA;
     descr.dst_addr  = (uintptr_t)dstDSA;
 
     // Map this Descriptor (<- user space) to DSA WQ portal (<- specific address space (privileged?))
@@ -161,24 +169,26 @@ void single_DSADescriptorInit(){
 
 // Verify transfer, free the memory, and store perf counters
 void finalizeDSA(){
-    //valueCheck(srcDSA, dstDSA, bufferSize, "[DSATest] ");
     uint64_t serialLatency, pthreadLatency;
 
-    munmap(wq_portal, PORTAL_SIZE);
-    //free(srcDSA);
-    free(dstDSA);
-
     serialLatency = (endTimeDSA-startTimeDSA);
-    pthreadLatency = (endTimePThread-startTimeDSA);
-    //printf("DEBUG: pthread lat = %lu cycs, serial lat= %lu cycs\n", pthreadLatency, serialLatency);
+
+    if(serialLatency > 1000000)
+    {
+        printf("ERROR - DETECTED SERIAL LATENCY THAT IS WAYYYY TO HIGH!");
+        printf("EndTime   = Cycle: %lu\n", endTimeDSA);
+        printf("StartTime = Cycle: %lu\n", startTimeDSA);
+        abort();
+    }
 
     resArr[DSAenqIndx]  = endTimeEnQ-startTimeEnQ;
-    resArr[DSAFlushIndx] = (pthreadLatency < serialLatency)? pthreadLatency : serialLatency;
+    resArr[DSAFlushIndx] = serialLatency;
 }
 
 // Actual ASM functionality to send descriptor 
 uint8_t enqcmd(void *_dest, const void *_src){
     uint8_t retry;
+    cpuMFence();
     startTimeEnQ = rdtsc();
     asm volatile(".byte 0xf2, 0x0f, 0x38, 0xf8, 0x02\t\n"
                  "setz %0\t\n"
@@ -188,9 +198,11 @@ uint8_t enqcmd(void *_dest, const void *_src){
     while(compRec.status!=1){}
     endTimeDSA = rdtsc();
     startTimeDSA = endTimeEnQ;
+    cpuMFence();
 
     //printf("DEBUG: endTimeEnQ Timestamp =         %lu\n", endTimeEnQ);
-    //printf("DEBUG: endTimeEnQ elapsed time =         %lu\n", endTimeDSA-startTimeDSA);
+    //printf("DEBUG: endTimeEnQ elapsed time =         %lu\n", endTimeEnQ-startTimeEnQ);
+    //printf("DEBUG: endTimeDSA elapsed time =         %lu\n", endTimeDSA-startTimeDSA);
 
     return ((endTimeEnQ-startTimeEnQ)>15000 || (endTimeDSA-startTimeDSA)>15000);
 }
@@ -199,6 +211,13 @@ uint8_t enqcmd(void *_dest, const void *_src){
 void adjustTimes(){
     for(int i=0; i<NUM_TESTS; i++)
         resArr[i] -= RTDSC_latency;
+
+    if(resArr[DSAFlushIndx] > 1000000)
+    {
+        printf("ERROR - DETECTED ~ADJUSTED LATENCY~ THAT IS WAYYYY TO HIGH!");
+        printf("endTimeDSA-startTimeDSA = %lu, RTDSC_latency = %lu\n", endTimeDSA-startTimeDSA, RTDSC_latency);
+        abort();
+    }
 }
 
 void parseResults(char* fileName){
@@ -239,6 +258,7 @@ void parseResults(char* fileName){
     system(cmdStr);
 }
 
+// Caused WAY too many issues - for infrequent cases of smaller observed latency
 void* checkerThreadFn(void* args)
 {
     endTimePThread=0;

@@ -22,12 +22,14 @@
 #pragma once
 
 // Mutex typedefs
-typedef pthread_mutex_t  _MX;
-typedef pthread_cond_t   _MX_CND;
-#define   _MX_INIT      PTHREAD_MUTEX_INITIALIZER
-#define   _MX_CND_INIT  PTHREAD_COND_INITIALIZER
+//typedef pthread_mutex_t  _MX;
+//typedef pthread_cond_t   _MX_CND;
+//#define   _MX_INIT      PTHREAD_MUTEX_INITIALIZER
+//#define   _MX_CND_INIT  PTHREAD_COND_INITIALIZER
 
 // Useful Macros
+#define BULK_TEST_COUNT 100000
+
 #define LL_NODE_PADDING (4096 - sizeof(void*))
 #define PAGE_SIZE       4096
 #define UINT32_MAXVAL   4294967295
