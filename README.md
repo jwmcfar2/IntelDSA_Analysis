@@ -1,6 +1,8 @@
 # IntelDSA Analysis
 
-Repo Exploring Intel Data Streaming Accelerator (DSA) Architecture and Analysis
+Repo Exploring Intel Data Streaming Accelerator (DSA) Architecture and Analysis - including performance comparison
+against other comparable instructions, as well as exploration of Spectre exploiting structure of DSA Batch Queuing to
+quickly map large, important data. 
 
 # Scripts (IntelDSA_Analysis/myScripts/)
 
