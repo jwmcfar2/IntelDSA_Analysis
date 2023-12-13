@@ -3,4 +3,5 @@ src/main/example*
 bin/
 **/*.png
 **/*.out
+**/*.o
 BKP
