@@ -36,8 +36,9 @@ I tried to make them as general as possible to maximize different use-cases for 
 	- Run 'Serialized Max Performance' DSA Analysis/Comparison Tests (numTests hard coded by 'BULK_TEST_COUNT' in utils.h, so only give it '1'): 
 		- **myScripts/initRun 1 2** 
 
-	- Run 'Batch Spectre' (NOTE: Not in 'initRun.sh' script! Syntax = bin/DSASpectre [bufferSize ( <= 4096 && divisible by 64)] [outputFile]):
+	- Run 'Batch Spectre' (NOTE: Not in 'initRun.sh' script! Syntax = bin/DSASpectre [bufferSize] [outputFile]):
 		- **bin/DSASpectre 1024 results/batchSpectreFails.out > results/batchSpectrePrints.out**
+		- (Note:  (bufferSize <= 4096 && bufferSize % 64 == 0) -- but the 4KB can be fixed somehow)
 
 	- Graph Cold Misses / Max Performance results (NOTE: Graph scripts may need a little manual tweaking of axis values for different runs to show data more clearly):
 		- **myScripts/graphScript.sh 0**
