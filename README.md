@@ -23,27 +23,27 @@ I tried to make them as general as possible to maximize different use-cases for 
 2) For simplicity of my program, I statically defined the WQ I chose in 'utils.h'. Modify 
 	utils.h (or automate this) and change wqPath string to match your WQ (set to '/dev/dsa/wq2.0' by default)
 
-3) Build code via script: myScripts/buildScript.sh
+3) Build code via script: **myScripts/buildScript.sh**
 
 3) Run DSATests:
-	- All Tests: ./initRun [numTests] [mode] {-q == quiet script prints | Optional}
-	- One Test: bin/DSA... [params]
+	- All Tests: **./initRun [numTests] [mode] {-q == quiet script prints | Optional}**
+	- One Test: **bin/DSA... [params]**
 
 5) Example Uses:
-    - Run 'Serialized Cold Miss' DSA Analysis/Comparison Tests (Slow! '100 tests' ~=10m): 
-		- **myScripts/initRun 100 0**
+    - **Run 'Serialized Cold Miss' DSA Analysis/Comparison Tests** (Slow! '100 tests' ~=10m): 
+		- ***myScripts/initRun 100 0***
 
-	- Run 'Serialized Max Performance' DSA Analysis/Comparison Tests (numTests hard coded by 'BULK_TEST_COUNT' in utils.h, so only give it '1'): 
-		- **myScripts/initRun 1 2** 
+	- **Run 'Serialized Max Performance' DSA Analysis/Comparison Tests** (numTests hard coded by 'BULK_TEST_COUNT' in utils.h, so only give it '1'): 
+		- ***myScripts/initRun 1 2*** 
 
-	- Run 'Batch Spectre' (NOTE: Not in 'initRun.sh' script! Syntax = bin/DSASpectre [bufferSize] [outputFile]):
-		- **bin/DSASpectre 1024 results/batchSpectreFails.out > results/batchSpectrePrints.out**
+	- **Run 'Batch Spectre'** (NOTE: Not in 'initRun.sh' script! Syntax = bin/DSASpectre [bufferSize] [outputFile]):
+		- ***bin/DSASpectre 1024 results/batchSpectreFails.out > results/batchSpectrePrints.out***
 		- (Note:  (bufferSize <= 4096 && bufferSize % 64 == 0) -- but the 4KB can be fixed somehow)
 
-	- Graph Cold Misses / Max Performance results (NOTE: Graph scripts may need a little manual tweaking of axis values for different runs to show data more clearly):
-		- **myScripts/graphScript.sh 0**
-		- **myScripts/graphScript.sh 2**
-
+	- **Graph Cold Misses / Max Performance results** (NOTE: Graph scripts may need a little manual tweaking of axis values for different runs to show data more clearly):
+		- ***myScripts/graphScript.sh 0***
+		- ***myScripts/graphScript.sh 2**
+*
 -------------------------------------------------------------------------------------------------------------------------
 
 NOTE: I tried to avoid server-specific/user-specific code when possible, but cannot guarantee it will run as-is on all
