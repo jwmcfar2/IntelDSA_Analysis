@@ -5,7 +5,7 @@
 
 // Size / settings
 #define PORTAL_SIZE 4096
-#define _headerStr_ "DSA_EnQ DSA_flush clflush clflushopt\n"
+#define _headerStr_ "DSA_Batch_Attk Spectre_V1\n"
 #define MAX_BATCHSZ 32
 
 // Pull in externs from utils.h
@@ -14,13 +14,14 @@ uint64_t RTDSC_latency;
 uint64_t L1d_Hit_Latency;
 uint64_t LLC_Miss_Latency;
 uint64_t nprocs=0;
+uint64_t spectreRuns=1;
+uint64_t spectreFailsV1=0;
+uint64_t spectreFailsBatch=0;
 
 // Perf Counter Indexes, indexed 0-3 (4 entries -> NUM_TESTS=4)
 typedef enum {
-    DSAenqIndx, // Starts at 0
-    DSAFlushIndx,
-    clflushIndx,
-    clflushoptIndx,
+    DSABatchAttk, // Starts at 0
+    SpectreV1Attk,
     NUM_TESTS
 } resIndxEnum;
 
@@ -34,9 +35,6 @@ typedef enum {
     bulkContention,
     NUM_MODES
 } modeEnum;
-
-// WQ I used _JMac
-char* wqPath = "/dev/dsa/wq2.0";
 
 // Descriptor Data
 struct dsa_completion_record compRec __attribute__((aligned(32)));
@@ -70,7 +68,7 @@ void        initArr2AndFlush();
 void        initDSAArr2AndFlush();
 uint8_t     spectreV1Gadget(size_t x);
 uint8_t     spectreDSAGadget(size_t x);
-void        spectreDSABatch();
+int         spectreDSABatch();
 void volatile buildDSAAttackOp();
 
 // Structures needed for SpectreV1 Test
@@ -83,9 +81,6 @@ size_t arr1Len = 16;
 size_t arr2Len = 256*512;
 size_t secretLen;
 uint8_t dummyReturnVar = 0;
-//char *secretDSAGuess;
-//struct dsa_hw_desc spectreDescr[256*512] = {0};
-//size_t spectreDescrLen = 256*512;
 
 // Structures needed for Spectre DSA Batch, adapted from OG Spectre:
 uint8_t arr1DSA[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};

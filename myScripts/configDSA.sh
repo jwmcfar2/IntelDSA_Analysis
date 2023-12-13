@@ -51,6 +51,7 @@ read -p $'\n- Make Selection\n\t[1] -- Load Existing Config from \"configs/\"\n\
 
 # Load Config
 if [[ userInput -eq 1 ]]; then
+    echo -e "\t### AUTHOR NOTE: For some reason, I can't get this to load an old config\n\tafter a server restart - either debug this script or just make a new config altogether if a restart occurs... _JMac\n"
     echo -e "\nDiscovered .conf files:"
     ls $confFolder
     mostRecentConf=$(ls -t configs/ | head -n1)
@@ -144,6 +145,8 @@ for wq in ${wqIDs[@]}; do
     accel-config config-wq dsa${dsaID}/wq${dsaID}.${wq} --group-id=$groupID $wqSettings
     echo -e "Mapped WQ-${wq} to Group-$groupID\n"
 done
+
+echo -e "\t### AUTHOR NOTE: If you see errors like 'enabled 0 out of 1',\n\tthat just means everything is already enabled - safe to ignore! _JMac\n"
 ################################
 
 ##### Enable the Device #####
@@ -168,6 +171,10 @@ echo -e "Saved this config to: \"$fileName\""
 ################################
 
 ### Optional: Read File Now ####
+echo -e "\n\t### AUTHOR NOTE: When you first make this config - it \n\ttakes a snapshot of all DSA configs..."
+echo -e "\tThis means if you don't want to 'touch' other DSA\n\taccelerators, don't load this .conf immediately..."
+echo -e "\tInstead, open the file directly, delete the necessary\n\t sections so only your DSA section is left..."
+echo -e "\tThen just rerun this script, and choose the 'load config' option! _JMac"
 read -p $'\n- Load config now? (y/n): ' userInput
 
 if [[ $userInput == *[yY]* && $userInput != *[nN]* ]]; then

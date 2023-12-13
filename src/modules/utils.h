@@ -65,6 +65,9 @@ typedef struct __tile_config
   uint8_t rows[16];
 } AMXtile;
 
+// WQ I used _JMac
+char* wqPath = "/dev/dsa/wq2.0";
+
 // System Profile Vars
 extern uint64_t flushReload_latency;
 extern uint64_t RTDSC_latency;

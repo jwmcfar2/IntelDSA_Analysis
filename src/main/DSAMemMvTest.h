@@ -42,9 +42,6 @@ typedef enum {
     NUM_MODES
 } modeEnum;
 
-// WQ I used _JMac
-char* wqPath = "/dev/dsa/wq2.0";
-
 // Descriptor Data
 struct dsa_completion_record compRec __attribute__((aligned(32)));
 struct dsa_hw_desc descr = {0};
