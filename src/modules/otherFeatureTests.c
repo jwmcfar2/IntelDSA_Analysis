@@ -1075,7 +1075,7 @@ uint64_t volatile single_SSE4cmp(uint64_t bufSize, bool primeCache){
     free(src);
     free(dst);
     free(srcSSE4Arr);
-    free(srcSSE4Arr);
+    free(dstSSE4Arr);
     return (endTime-startTime);
 }
 

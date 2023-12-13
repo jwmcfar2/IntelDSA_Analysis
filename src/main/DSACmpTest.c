@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
                         cpuMFence();
                         break;
                     case 1: // SSE4cmp
+                        break;
                         resArr[SSE4cmp] = single_SSE4cmp(bufferSize, mode);
                         cpuMFence();
                         break;

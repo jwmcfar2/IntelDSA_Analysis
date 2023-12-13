@@ -1,5 +1,9 @@
 #!/bin/bash
+#
 # syntax: ./initRun [numTests] [mode] {-q == quiet script prints}
+# NOTE: When running 'mode = 2' -- only give it 'numTests = 1' -- This is statically defined in utils.h 'BULK_TEST_COUNT'
+#
+#########################################################################################################################
 
 count=$1
 mode=$2
