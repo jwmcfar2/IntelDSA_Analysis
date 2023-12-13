@@ -54,6 +54,9 @@ uint64_t  endTimePThread;
 uint8_t   descriptorRetry;
 bool      threadStarted=0;
 
+// WQ I used (defined in utils.h) _JMac
+char* wqPath = WQ_PATH;
+
 // Function List
 void        single_DSADescriptorInit();
 void        finalizeDSA();

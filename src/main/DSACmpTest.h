@@ -14,6 +14,9 @@ uint64_t L1d_Hit_Latency;
 uint64_t LLC_Miss_Latency;
 uint64_t nprocs=0;
 
+// WQ I used (defined in utils.h) _JMac
+char* wqPath = WQ_PATH;
+
 // Perf Counter Indexes, indexed 0-6 (7 entries -> NUM_TESTS=7)
 typedef enum {
     DSAenqIndx, // Starts at 0
