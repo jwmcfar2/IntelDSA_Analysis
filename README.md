@@ -31,17 +31,17 @@ I tried to make them as general as possible to maximize different use-cases for 
 
 5) Example Uses:
     - Run 'Serialized Cold Miss' DSA Analysis/Comparison Tests (Slow! '100 tests' ~=10m): 
-		**myScripts/initRun 100 0**
+		- **myScripts/initRun 100 0**
 
 	- Run 'Serialized Max Performance' DSA Analysis/Comparison Tests (numTests hard coded by 'BULK_TEST_COUNT' in utils.h, so only give it '1'): 
-		**myScripts/initRun 1 2** 
+		- **myScripts/initRun 1 2** 
 
 	- Run 'Batch Spectre' (NOTE: Not in 'initRun.sh' script! Syntax = bin/DSASpectre [bufferSize ( <= 4096 && divisible by 64)] [outputFile]):
-		**bin/DSASpectre 1024 results/batchSpectreFails.out > results/batchSpectrePrints.out**
+		- **bin/DSASpectre 1024 results/batchSpectreFails.out > results/batchSpectrePrints.out**
 
 	- Graph Cold Misses / Max Performance results (NOTE: Graph scripts may need a little manual tweaking of axis values for different runs to show data more clearly):
-		**myScripts/graphScript.sh 0**
-		**myScripts/graphScript.sh 2**
+		- **myScripts/graphScript.sh 0**
+		- **myScripts/graphScript.sh 2**
 
 -------------------------------------------------------------------------------------------------------------------------
 
