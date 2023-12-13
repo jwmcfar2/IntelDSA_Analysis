@@ -43,8 +43,8 @@ I tried to make them as general as possible to maximize different use-cases for 
 	- **Graph Cold Misses / Max Performance results** (NOTE: Graph scripts may need a little manual tweaking of axis values for different runs to show data more clearly):
 		- ***myScripts/graphScript.sh 0***
 		- ***myScripts/graphScript.sh 2***
-*
+
 -------------------------------------------------------------------------------------------------------------------------
 
-NOTE: I tried to avoid server-specific/user-specific code when possible, but cannot guarantee it will run as-is on all
+**NOTE**: I tried to avoid server-specific/user-specific code when possible, but cannot guarantee it will run as-is on all
 systems that have DSA - some adjustments may be needed (posisbly other source code variables/configs I'm forgetting)
