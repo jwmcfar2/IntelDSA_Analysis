@@ -42,7 +42,7 @@ I tried to make them as general as possible to maximize different use-cases for 
 
 	- **Graph Cold Misses / Max Performance results** (NOTE: Graph scripts may need a little manual tweaking of axis values for different runs to show data more clearly):
 		- ***myScripts/graphScript.sh 0***
-		- ***myScripts/graphScript.sh 2**
+		- ***myScripts/graphScript.sh 2***
 *
 -------------------------------------------------------------------------------------------------------------------------
 
