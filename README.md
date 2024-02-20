@@ -12,6 +12,7 @@ I tried to make them as general as possible to maximize different use-cases for 
 
 # System Environment
 
+- Intel CPU which has AVX, AMX, and DSA Accelerators
 - Red Hat Enterprise Linux release 9.3 (Plow)
 - GCC v11.4.1
 - Any/All Libraries Needed for AVX, AMX, SSE<=4, DSA
